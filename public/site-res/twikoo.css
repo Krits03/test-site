@@ -1,0 +1,505 @@
+/*!
+ * Twikoo 美化样式 · v2
+ * ------------------------------------------------------------------
+ * 适配 Twikoo 2.x（本站为 twikoo@2.0.9）
+ * 站点：https://site.wkr-dev.top （Kr.Zhan · Nuxt）
+ *
+ * 说明：
+ * 1. Twikoo 2.x 已移除 Element UI，旧版依赖 .el-input__inner / .el-button--primary
+ *    等类名的规则全部失效，本文件已全部改写为 2.x 的 .tk-* 类名。
+ * 2. 颜色全部取自站点自身的 CSS 变量（--c-* / --font-*），明暗模式自动跟随。
+ * 3. 设计取向：与站点既有评论样式保持一致（圆角、留白、克制的强调色），
+ *    不做大改布局，仅补齐输入框 / 按钮 / 分页 / 验证码 / 灯箱等新版组件的观感。
+ * ------------------------------------------------------------------
+ */
+
+/* ==================================================================
+   1. 局部变量（全部回退到站点变量，变量缺失时也有安全兜底）
+   ================================================================== */
+#twikoo {
+	--tk-text: var(--c-text-1, #333);
+	--tk-text-2: var(--c-text-2, #666);
+	--tk-text-3: var(--c-text-3, #999);
+
+	--tk-bg: var(--c-bg, #fff);
+	--tk-bg-2: var(--c-bg-2, #f2f2f5);
+	--tk-bg-3: var(--c-bg-3, #e9e9ee);
+
+	--tk-border: var(--c-border, #e5e5ea);
+	--tk-primary: var(--c-primary, #2a6df4);
+	--tk-primary-soft: var(--c-primary-soft, #2a6df426);
+
+	--tk-success: var(--c-success, #5a5);
+	--tk-warning: var(--c-warning, #d85);
+	--tk-error: var(--c-error, #d55);
+
+	--tk-radius: 0.625em;
+	--tk-radius-sm: 0.375em;
+	--tk-shadow: var(--box-shadow-1, 0 0.1em 0.2em #0000001a);
+	--tk-font: var(--font-basic, system-ui, sans-serif);
+}
+
+/* ==================================================================
+   2. 输入框
+   ================================================================== */
+
+/* 单行输入框（昵称 / 邮箱 / 网址 / 搜索 / 页码） */
+#twikoo .tk-input__inner {
+	background-color: var(--tk-bg-2);
+	border: 1px solid var(--tk-border);
+	border-radius: var(--tk-radius);
+	color: var(--tk-text);
+	transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+#twikoo .tk-input__inner:hover {
+	border-color: color-mix(in srgb, var(--tk-primary) 35%, var(--tk-border));
+}
+
+#twikoo .tk-input__inner:focus {
+	border-color: var(--tk-primary);
+	background-color: var(--tk-bg);
+	box-shadow: 0 0 0 0.15em var(--tk-primary-soft);
+}
+
+/* 输入组前置/后置标签（prepend / append） */
+#twikoo .tk-input-group__prepend,
+#twikoo .tk-input-group__append {
+	background-color: var(--tk-bg-3);
+	border-color: var(--tk-border);
+	color: var(--tk-text-2);
+	font-weight: 500;
+}
+
+/* group 模式：前置块左圆角、输入框右圆角，拼成完整圆角组。
+   注意：不要给输入框设 border-left: 0 —— 相邻边框宽度为 0 时，
+   浏览器会把对应侧的圆角半径一并收敛为 0（规范行为），导致左侧变直角。
+   Twikoo 默认样式已处理了 prepend/append 与输入框之间的边框重叠。 */
+#twikoo .tk-input--group .tk-input-group__prepend {
+	padding: 0 1rem;
+	border-radius: var(--tk-radius) 0 0 var(--tk-radius);
+}
+
+#twikoo .tk-input--group .tk-input__inner {
+	border-radius: 0 var(--tk-radius) var(--tk-radius) 0;
+}
+
+#twikoo .tk-input-group__append {
+	border-radius: 0 var(--tk-radius) var(--tk-radius) 0;
+}
+
+#twikoo .tk-input__inner::placeholder {
+	color: var(--tk-text-3);
+}
+
+/* 评论正文输入区：默认 66px 偏小，适当放宽 */
+#twikoo .tk-textarea .tk-input__inner {
+	min-height: 110px;
+	padding: 12px 14px 26px;
+	border-radius: var(--tk-radius);
+	line-height: 1.6;
+}
+
+#twikoo .tk-input__count {
+	color: var(--tk-text-3);
+	font-size: 0.7rem;
+}
+
+#twikoo .tk-input__suffix {
+	color: var(--tk-text-3);
+}
+
+/* ==================================================================
+   3. 昵称 / 邮箱 / 网址 输入提示浮层
+   （保留旧版交互，按 2.x 的 .tk-meta-input > .tk-input 结构重写）
+   ================================================================== */
+#twikoo .tk-meta-input .tk-input::before,
+#twikoo .tk-meta-input .tk-input::after {
+	/* 默认隐藏，聚焦时显示 */
+	display: none;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 1;
+	pointer-events: none;
+	/* 一律改用 bottom 定位、以输入框上边缘为锚点向上生长。
+	   不要用固定 top 偏移（如 top: -3.1em）：那按单行气泡高度写死，
+	   文案换行成多行后高度会超过偏移量，气泡反而向下压住输入框。 */
+}
+
+#twikoo .tk-meta-input {
+	gap: 0.5rem;
+}
+
+#twikoo .tk-meta-input .tk-input::before {
+	/* 下边缘 = 输入框上边缘上方 0.4em（正好留给下方箭头） */
+	bottom: calc(100% + 0.4em);
+	/* 只用 left: 50% 定位时，绝对定位盒的收缩宽度只剩输入框的一半，文案会被挤成多行。
+	   用 max-content 按文案取宽，再由 max-width 兜住：三句提示单行分别需要约 265/265/222px，
+	   上限取 24em(288px) 才能让最长的一句不折行（20em 时正好卡在 240px 会折成两行）。 */
+	width: max-content;
+	max-width: 24em;
+	padding: 0.5em 0.75em;
+	border: 1px solid var(--tk-border);
+	border-radius: var(--tk-radius-sm);
+	background-color: var(--tk-bg-3);
+	box-shadow: var(--tk-shadow);
+	color: var(--tk-text);
+	font-size: 0.75rem;
+	line-height: 1.4;
+	white-space: normal;
+	text-align: center;
+}
+
+#twikoo .tk-meta-input .tk-input::after {
+	content: "";
+	/* 三角形顶边接住气泡下边缘，尖端正好落在输入框上边缘 */
+	bottom: calc(100% - 0.4em);
+	border: 0.4em solid transparent;
+	border-top-color: var(--tk-bg-3);
+}
+
+#twikoo .tk-meta-input .tk-input:nth-child(1)::before {
+	content: "输入 QQ 号可以自动使用您的 QQ 头像";
+}
+
+#twikoo .tk-meta-input .tk-input:nth-child(2)::before {
+	content: "别人回复您后，可以通过该邮箱通知您";
+}
+
+#twikoo .tk-meta-input .tk-input:nth-child(3)::before {
+	content: "可以通过点击昵称访问您的网站";
+}
+
+/* 聚焦时展开提示 */
+#twikoo .tk-meta-input .tk-input:focus-within::before,
+#twikoo .tk-meta-input .tk-input:focus-within::after {
+	display: block;
+}
+
+/* ==================================================================
+   4. 按钮与操作行
+   ================================================================== */
+#twikoo .tk-button {
+	padding: 0.5em 1.1em;
+	border: 1px solid var(--tk-border);
+	border-radius: var(--tk-radius-sm);
+	background-color: var(--tk-bg-2);
+	color: var(--tk-text);
+	font-size: 0.8125rem;
+	line-height: 1.4;
+	transition: color 0.2s, border-color 0.2s, background-color 0.2s, filter 0.2s;
+}
+
+#twikoo .tk-button:not(.is-disabled):hover {
+	border-color: var(--tk-primary);
+	background-color: var(--tk-primary-soft);
+	color: var(--tk-primary);
+}
+
+/* 主按钮：文字色跟随 --c-bg，明暗模式下都能保证对比度 */
+#twikoo .tk-button--primary {
+	border-color: var(--tk-primary);
+	background-color: var(--tk-primary);
+	color: var(--c-bg, #fff);
+}
+
+#twikoo .tk-button--primary:not(.is-disabled):hover {
+	border-color: var(--tk-primary);
+	background-color: var(--tk-primary);
+	color: var(--c-bg, #fff);
+	filter: brightness(1.08);
+}
+
+#twikoo .tk-button--primary.is-disabled {
+	border-color: transparent;
+	background-color: color-mix(in srgb, var(--tk-primary) 45%, transparent);
+	color: color-mix(in srgb, var(--c-bg, #fff) 70%, transparent);
+}
+
+/* 文字按钮 */
+#twikoo .tk-button--text {
+	border-color: transparent;
+	background-color: transparent;
+	color: var(--tk-text-2);
+}
+
+#twikoo .tk-button--text:not(.is-disabled):hover {
+	color: var(--tk-primary);
+}
+
+/* 操作行：左侧功能图标 + 右侧按钮 */
+#twikoo .tk-row.actions {
+	margin-top: 0.75rem;
+	gap: 0.5rem;
+}
+
+#twikoo .tk-submit-action-icon {
+	color: var(--tk-text-3);
+	transition: color 0.2s;
+}
+
+#twikoo .tk-submit-action-icon:hover {
+	color: var(--tk-primary);
+}
+
+#twikoo .tk-row-actions-start {
+	gap: 0.5rem;
+}
+
+/* ==================================================================
+   5. 评论列表
+   ================================================================== */
+#twikoo .tk-comment {
+	margin-top: 1.25rem;
+}
+
+#twikoo .tk-avatar {
+	background-color: var(--tk-bg-3);
+}
+
+#twikoo .tk-avatar .tk-avatar-img {
+	color: var(--tk-text-3);
+}
+
+/* 评论正文：淡背景块，与站点 blockquote 的处理保持一致。
+   负 margin 用于抵消 padding，避免改变既有布局与链接可绘制区域。 */
+#twikoo .tk-comment .tk-main .tk-content {
+	margin: 0.25rem -0.75em -0.5em;
+	padding: 0.5em 0.75em;
+	border-radius: var(--tk-radius);
+	background-color: var(--tk-bg-2);
+}
+
+/* 展开更多 */
+#twikoo .tk-expand:hover {
+	background-color: var(--tk-primary-soft);
+	color: var(--tk-primary);
+}
+
+/* 点赞 / 回复等操作 */
+#twikoo .tk-action-link {
+	color: var(--tk-text-3);
+	transition: color 0.2s;
+}
+
+#twikoo .tk-action-link:hover {
+	color: var(--tk-primary);
+}
+
+#twikoo .tk-action-icon {
+	color: var(--tk-text-3);
+}
+
+#twikoo .tk-action-link.tk-liked .tk-action-icon-solid {
+	color: var(--tk-primary);
+}
+
+#twikoo .tk-action-count {
+	color: var(--tk-text-3);
+}
+
+/* 行内代码：跟随主题，不再用高饱和配色 */
+#twikoo code {
+	padding: 0.1em 0.35em;
+	border-radius: 0.25em;
+	background-color: var(--tk-bg-3);
+	font-size: 0.9em;
+}
+
+#twikoo pre code {
+	background-color: transparent;
+}
+
+/* ==================================================================
+   6. 新版组件：标题栏 / 排序 / 搜索 / 分页 / 验证码 / 灯箱
+   ================================================================== */
+#twikoo .tk-comments-actions {
+	font-size: 0.8125rem;
+}
+
+#twikoo .tk-sort-item {
+	color: var(--tk-text-3);
+	transition: color 0.2s;
+}
+
+#twikoo .tk-sort-item:hover {
+	color: var(--tk-text);
+}
+
+#twikoo .tk-sort-item.__active {
+	color: var(--tk-primary);
+	font-weight: 600;
+}
+
+#twikoo .tk-comments-search .tk-input__inner {
+	border-radius: var(--tk-radius);
+}
+
+/* 分页 */
+#twikoo .tk-pagination {
+	margin-top: 1rem;
+	gap: 0.5rem;
+	color: var(--tk-text-2);
+}
+
+#twikoo .tk-pagination-pager {
+	border-radius: var(--tk-radius-sm);
+	transition: background-color 0.2s, color 0.2s;
+}
+
+#twikoo .tk-pagination-pager:hover {
+	background-color: var(--tk-bg-3);
+	color: var(--tk-text);
+}
+
+#twikoo .tk-pagination-pager.__current {
+	background-color: var(--tk-primary);
+	color: var(--c-bg, #fff);
+	font-weight: 600;
+}
+
+/* 人机验证（Turnstile / 极验）：确保浮层可见且不被裁切 */
+#twikoo .tk-turnstile-container,
+#twikoo .tk-geetest-container,
+#twikoo .tk-cap-container {
+	z-index: 2;
+	background-color: var(--tk-bg);
+	border: 1px solid var(--tk-border);
+	border-radius: var(--tk-radius-sm);
+	padding: 0.25em;
+	box-shadow: var(--tk-shadow);
+}
+
+/* 图片灯箱 */
+#twikoo .tk-lightbox {
+	background-color: #000000b3;
+	backdrop-filter: blur(4px);
+}
+
+#twikoo .tk-lightbox-image {
+	border-radius: var(--tk-radius);
+	box-shadow: 0 0.5em 2em #00000066;
+}
+
+/* 标签（博主 / 置顶 / 待审核等） */
+#twikoo .tk-tag {
+	border-radius: var(--tk-radius-sm);
+}
+
+#twikoo .tk-tag-green {
+	border-color: transparent;
+	background-color: var(--tk-primary-soft);
+	color: var(--tk-primary);
+}
+
+#twikoo .tk-tag-blue {
+	border-color: transparent;
+	background-color: var(--tk-primary-soft);
+	color: var(--tk-primary);
+}
+
+#twikoo .tk-tag-yellow {
+	border-color: transparent;
+	background-color: color-mix(in srgb, var(--tk-warning) 15%, transparent);
+	color: var(--tk-warning);
+}
+
+#twikoo .tk-tag-red {
+	border-color: transparent;
+	background-color: color-mix(in srgb, var(--tk-error) 15%, transparent);
+	color: var(--tk-error);
+}
+
+/* 错误提示 */
+#twikoo .tk-error {
+	border-radius: var(--tk-radius-sm);
+	border-color: color-mix(in srgb, var(--tk-error) 50%, transparent);
+	background-color: color-mix(in srgb, var(--tk-error) 10%, transparent);
+	color: var(--tk-error);
+}
+
+/* 预览区 */
+#twikoo .tk-preview-container {
+	border: 1px solid var(--tk-border);
+	border-radius: var(--tk-radius);
+	background-color: var(--tk-bg-2);
+}
+
+/* ==================================================================
+   7. 管理面板（默认深色，仅做轻量协调）
+   ================================================================== */
+#twikoo .tk-admin-container {
+	border-radius: var(--tk-radius);
+	overflow: hidden;
+}
+
+#twikoo .tk-admin-config-input .tk-input__inner {
+	border-radius: var(--tk-radius-sm);
+}
+
+#twikoo .tk-admin-comment-list {
+	border-radius: var(--tk-radius-sm);
+}
+
+/* ==================================================================
+   8. 加载态与动画
+   ================================================================== */
+#twikoo .tk-loading-mask {
+	background-color: color-mix(in srgb, var(--tk-bg) 60%, transparent);
+	backdrop-filter: blur(2px);
+	border-radius: var(--tk-radius-sm);
+}
+
+@keyframes tk-fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+#twikoo .tk-comments-container {
+	animation: tk-fade-in 0.3s ease;
+}
+
+/* 尊重系统的「减少动态效果」设置 */
+@media (prefers-reduced-motion: reduce) {
+	#twikoo *,
+	#twikoo *::before,
+	#twikoo *::after {
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+}
+
+/* ==================================================================
+   9. 移动端
+   ================================================================== */
+@media screen and (max-width: 767px) {
+	/* 窄屏下 meta 输入改为纵向排列、彼此只隔 0.5rem：
+	   气泡朝上会压住上一个输入框，朝下会压住下一个，附近没有可落位的空隙，
+	   因此窄屏不显示气泡（提示信息由 twikoo 正文占位符
+	   「昵称输入 QQ 号后 / 点击邮箱自动填充 / 图片大小限制为 4MB」承担）。 */
+	#twikoo .tk-meta-input .tk-input:focus-within::before,
+	#twikoo .tk-meta-input .tk-input:focus-within::after {
+		display: none;
+	}
+
+	#twikoo .tk-row.actions {
+		margin-left: 0;
+		flex-wrap: wrap;
+	}
+
+	#twikoo .tk-comment .tk-main .tk-content {
+		margin-inline: -0.5em;
+		padding-inline: 0.5em;
+	}
+
+	#twikoo .tk-textarea .tk-input__inner {
+		min-height: 96px;
+	}
+}

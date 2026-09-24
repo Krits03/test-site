@@ -51,6 +51,17 @@ function confirmOpen() {
 	window.open(popoverInputEl.value?.textContent, '_blank')
 }
 
+// 评论区美化样式：随评论组件一起按需加载，避免进 nuxt.config 的 css 打包全局生效。
+// 置于 body 末尾（页脚位置），不阻塞首屏渲染；文档序晚于 twikoo 注入的 <style>，
+// 同优先级声明下可覆盖其默认外观。
+useHead({
+	link: [{
+		rel: 'stylesheet',
+		href: '/site-res/twikoo.css',
+		tagPosition: 'bodyClose',
+	}],
+})
+
 onMounted(() => {
 	window.twikoo?.init?.({
 		envId: appConfig.twikoo?.envId,
