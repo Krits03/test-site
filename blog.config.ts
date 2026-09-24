@@ -83,12 +83,16 @@ const blogConfig = {
 		{ 'src': 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "4ae7cffe5f8246079a0890511f066c21"}', 'defer': true },
 		// Cap 人机验证组件的内部依赖：Cap 默认从 cdn.jsdelivr.net 取 wasm 与 pako 解压库，该域名在国内不稳定。
 		// 这三个地址在 Cap 内部是可被全局变量覆盖的开关（window.CAP_CUSTOM_WASM_URL / CAP_CUSTOM_HASHWX_URL / CAP_PAKO_URL），
-		// 这里直接改写为 npmmirror（阿里 npm 镜像）。注意 wasm 版本需与组件内部写死的版本一致（当前 0.0.8），升级组件时同步更新。
-		// npmmirror 的 /files/ 端点：scoped 包用 <scope>/<name>/<version>/files/<path>，非 scoped 包同理，不能写成 name@version。
+		// 已本地化到 public/site-res/cap/ 同源加载（镜像站不可靠：npmmirror 只在部分边缘节点回 ACAO，zstatic 对 .wasm 直接 451）。
+		// wasm 版本需与组件内部写死的版本一致（当前 0.0.8），升级组件时同步更新：
+		// curl -sL -o public/site-res/cap/cap_wasm_bg.wasm https://cdn.jsdelivr.net/npm/@cap.js/wasm@0.0.8/browser/cap_wasm_bg.wasm
+		// curl -sL -o public/site-res/cap/hashwx.wasm https://cdn.jsdelivr.net/npm/@cap.js/wasm@0.0.8/browser/hashwx.wasm
+		// curl -sL -o public/site-res/cap/pako_inflate.min.js https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako_inflate.min.js
+		// （Cap 用 fetch().arrayBuffer() + WebAssembly.compile()，不依赖响应 MIME，静态托管无需额外配置）
 		{
-			innerHTML: 'window.CAP_CUSTOM_WASM_URL="https://registry.npmmirror.com/@cap.js/wasm/0.0.8/files/browser/cap_wasm_bg.wasm";'
-				+ 'window.CAP_CUSTOM_HASHWX_URL="https://registry.npmmirror.com/@cap.js/wasm/0.0.8/files/browser/hashwx.wasm";'
-				+ 'window.CAP_PAKO_URL="https://registry.npmmirror.com/pako/2.1.0/files/dist/pako_inflate.min.js";',
+			innerHTML: 'window.CAP_CUSTOM_WASM_URL="/site-res/cap/cap_wasm_bg.wasm";'
+				+ 'window.CAP_CUSTOM_HASHWX_URL="/site-res/cap/hashwx.wasm";'
+				+ 'window.CAP_PAKO_URL="/site-res/cap/pako_inflate.min.js";',
 		},
 		// Twikoo 人机验证组件（Cap widget）
 		// Twikoo 2.x 内部把它的地址写死成了 cdn.jsdmirror.com，该镜像不稳定；
