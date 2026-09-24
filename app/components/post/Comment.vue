@@ -64,8 +64,8 @@ useHead({
 
 onMounted(() => {
 	window.twikoo?.init?.({
-		envId: appConfig.twikoo?.envId,
-		// twikoo 会把挂载后的元素变为 #twikoo
+		envId: appConfig.twikoo?.envId,		// 评论内代码高亮的 Prism 资源：Twikoo 默认走 cdn.jsdelivr.net（国内不稳定）
+		prismCdn: appConfig.twikoo?.prismCdn,		// twikoo 会把挂载后的元素变为 #twikoo
 		el: '#twikoo',
 	})
 })

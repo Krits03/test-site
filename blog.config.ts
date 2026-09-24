@@ -81,12 +81,22 @@ const blogConfig = {
 		{ 'src': '/site-res/umami.js', 'data-website-id': 'dce6932a-f94e-4645-8826-bb290a044d40', 'defer': true },
 		// 自己网站的 Cloudflare Insights 统计服务
 		{ 'src': 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "4ae7cffe5f8246079a0890511f066c21"}', 'defer': true },
+		// Cap 人机验证组件的内部依赖：Cap 默认从 cdn.jsdelivr.net 取 wasm 与 pako 解压库，该域名在国内不稳定。
+		// 这三个地址在 Cap 内部是可被全局变量覆盖的开关（window.CAP_CUSTOM_WASM_URL / CAP_CUSTOM_HASHWX_URL / CAP_PAKO_URL），
+		// 这里直接改写为 npmmirror（阿里 npm 镜像）。注意 wasm 版本需与组件内部写死的版本一致（当前 0.0.8），升级组件时同步更新。
+		// npmmirror 的 /files/ 端点：scoped 包用 <scope>/<name>/<version>/files/<path>，非 scoped 包同理，不能写成 name@version。
+		{
+			innerHTML: 'window.CAP_CUSTOM_WASM_URL="https://registry.npmmirror.com/@cap.js/wasm/0.0.8/files/browser/cap_wasm_bg.wasm";'
+				+ 'window.CAP_CUSTOM_HASHWX_URL="https://registry.npmmirror.com/@cap.js/wasm/0.0.8/files/browser/hashwx.wasm";'
+				+ 'window.CAP_PAKO_URL="https://registry.npmmirror.com/pako/2.1.0/files/dist/pako_inflate.min.js";',
+		},
 		// Twikoo 人机验证组件（Cap widget）
 		// Twikoo 2.x 内部把它的地址写死成了 cdn.jsdmirror.com，该镜像不稳定；
 		// 这里提前用 zstatic 定义好 <cap-widget>，Twikoo 检测到 customElements 中已存在就会跳过自带的加载。
 		// 若本脚本加载失败，Twikoo 会退回它自己的 CDN，评论流程不受影响。
 		{ src: 'https://s4.zstatic.net/npm/@cap.js/widget@0.1.58', defer: true, crossorigin: 'anonymous' },
 		// Twikoo 评论系统
+		// 官方 2.x 的语法目标为 ES2022，最低支持 Chrome/Edge 94、Firefox 93、Safari 15.4（更低的浏览器不受支持）
 		{ src: 'https://s4.zstatic.net/npm/twikoo@2.0.9/dist/twikoo.min.js', defer: true },
 	],
 
@@ -104,6 +114,8 @@ const blogConfig = {
 	twikoo: {
 		envId: 'https://twikoo.site.wkr-dev.top/.netlify/functions/twikoo/',
 		preload: 'https://twikoo.site.wkr-dev.top/.netlify/functions/twikoo/',
+		/** 评论内代码高亮的 Prism 资源地址：Twikoo 默认写死为 cdn.jsdelivr.net（国内不稳定），改用 zstatic 镜像 */
+		prismCdn: 'https://s4.zstatic.net/npm/prismjs@1.28.0',
 	},
 }
 
