@@ -15,7 +15,7 @@ tags: [Site, Logs, Vercel]
 - 更新文章banner
 
 ## 2026-08-30
-- 新文章上线：[基于 Vercel Blob 构建 S3 兼容的对象存储网关](/posts/2026/vercel-blob-to-s3/)。
+- 新文章上线：[基于 Vercel Blob 构建 S3 兼容的对象存储网关](/2026/vercel-blob-to-s3)。
 - 添加 萌备-ICP20260477号
 
 ## 2026-08-28
