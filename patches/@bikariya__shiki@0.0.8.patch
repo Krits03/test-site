@@ -1,0 +1,26 @@
+diff --git a/dist/runtime/store.js b/dist/runtime/store.js
+index 9e3fb5e86c7f30bed3c096aa322c03ff48126f20..25f6fa2dfe7f5cb6a917d21c60aae533f0d022bb 100644
+--- a/dist/runtime/store.js
++++ b/dist/runtime/store.js
+@@ -32,10 +32,8 @@ export const useShikiStore = defineStore("shiki", () => {
+       engine = createJavaScriptRegexEngine();
+     } catch {
+       const [{ createOnigurumaEngine }, wasm] = await Promise.all([
+-        // @ts-expect-error TS2307
+-        import("https://esm.sh/shiki/engine-oniguruma.mjs"),
+-        // @ts-expect-error TS2307
+-        import("https://esm.sh/shiki/wasm")
++        import("shiki/engine/oniguruma"),
++        import("shiki/wasm")
+       ]);
+       engine = await createOnigurumaEngine(wasm);
+     }
+@@ -56,7 +54,7 @@ export const useShikiStore = defineStore("shiki", () => {
+     });
+   }
+   async function loadLang(...langs) {
+-    const { bundledLanguages } = await import("https://esm.sh/shiki/langs");
++    const { bundledLanguages } = await import("shiki/langs");
+     const loadedLanguages = shiki?.getLoadedLanguages() ?? [];
+     await Promise.all(
+       langs.filter((lang) => !loadedLanguages.includes(lang)).map((lang) => bundledLanguages[lang]?.().then(shiki?.loadLanguage))
