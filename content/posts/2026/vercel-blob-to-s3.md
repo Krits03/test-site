@@ -101,8 +101,8 @@ twikoo.init({
   imgUploader: {
     async upload(file) {
       const res = await fetch(
-        'https://<网关域名>/api/upload?name=' +
-          encodeURIComponent(file.name) + '&path=comments',
+        'https://<网关域名>/api/upload?name='
+        + encodeURIComponent(file.name) + '&path=comments',
         {
           method: 'POST',
           headers: {
