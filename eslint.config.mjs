@@ -1,4 +1,6 @@
 import antfu from '@antfu/eslint-config'
+import css from '@zinkawaii/eslint-config-css'
+import { defineConfig } from 'eslint/config'
 
 export default antfu({
 	ignores: ['*.yaml'],
@@ -6,11 +8,16 @@ export default antfu({
 		indent: 'tab',
 	},
 	pnpm: true,
+	jsonc: {
+		overrides: {
+			'jsonc/indent': ['error', 2],
+		},
+	},
 	// @keep-sorted
 	rules: {
 		'vue/block-lang': ['warn', {
 			script: { lang: ['ts', 'tsx'] },
-			style: { lang: ['scss'] },
+			style: { lang: ['css'], allowNoLang: true },
 		}],
 		'vue/enforce-style-attribute': ['warn', {
 			allow: ['scoped'],
@@ -40,6 +47,7 @@ export default antfu({
 	// @keep-sorted
 	rules: {
 		'antfu/consistent-list-newline': 'off',
+		'e18e/prefer-includes': 'off',
 		'eqeqeq': 'off',
 		// MDC 的 YAML 参数和注释会被当成标题，文章也允许多个一级标题
 		'markdown/heading-increment': 'off',
@@ -59,6 +67,7 @@ export default antfu({
 		'style/quotes': 'off',
 		'style/semi': 'off',
 		'unicorn/prefer-includes': 'off',
+		'vue/block-lang': 'off',
 	},
 }, {
 	// 文章中的 JSON 示例允许尾随逗号
@@ -66,4 +75,14 @@ export default antfu({
 	rules: {
 		'jsonc/comma-dangle': ['warn', 'always'],
 	},
-})
+}).append({
+	files: ['app/**/*.css'],
+	extends: defineConfig(css),
+	rules: {
+		'css/no-important': 'off',
+		'css-stylistic/indentation': ['error', 'tab'],
+	},
+}).setDefaultIgnores(prevs => [
+	...prevs,
+	'**/*.css',
+])
