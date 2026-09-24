@@ -2,17 +2,17 @@
 <BlogWidget
 	card
 	dim
-	title="Linux闲聊Q群"
+	title="发现问题"
 	bg-img="https://p.qlogo.cn/gh/169994096/169994096/100/"
 	bg-aside
 >
 	<div class="title text-creative">
-		加入Q群
+		联系我
 	</div>
 
 	<Tip copy icon :tip-options="{ placement: 'left' }">
-		<Icon name="ri:qq-fill" />
-		<span>169994096</span>
+		<Icon name="tabler:mail" />
+		<span>me@wkr-dev.top</span>
 	</Tip>
 </BlogWidget>
 </template>
