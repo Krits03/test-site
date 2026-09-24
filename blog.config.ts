@@ -16,7 +16,7 @@ const basicConfig = {
 		name: '署名-非商业性使用-相同方式共享 4.0 国际',
 		url: 'https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hans',
 	},
-	favicon: 'https://site.wkr-dev.top/site-res/avatar-code.jpg',
+	favicon: 'https://weavatar.com/avatar/66eb9d166e7d453d0cc9a01e460860df84d8b8b5683869607e58fbcf58b32f95?s=160',
 	language: 'zh-CN',
 	timeEstablished: '2026-03-07',
 	timeZone: 'Asia/Shanghai',
