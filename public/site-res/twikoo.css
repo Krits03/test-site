@@ -371,14 +371,35 @@
 	box-shadow: var(--tk-shadow);
 }
 
-/* 图片灯箱 */
-#twikoo .tk-lightbox {
+/* 图片灯箱
+   ⚠️ 必须写成不带 .twikoo / #twikoo 前缀的全局选择器：
+   Twikoo 2.x 的灯箱是 createElement 之后 appendChild 到 document.body 的
+   （twikoo.min.js 里 `document.body.appendChild(n)`），而它自带样式全部写在
+   `.twikoo .tk-lightbox` 作用域下 —— 挂到 body 上一条都命中不了，于是灯箱失去
+   position: fixed / inset: 0 / 居中 transform，图片会以内联块堆在页面最底部。
+   因此这里要把定位相关的属性一并写全，不能只做视觉微调。 */
+.tk-lightbox {
+	position: fixed;
+	inset: 0;
+	z-index: 999;
+	display: block;
 	background-color: #000000b3;
 	backdrop-filter: blur(4px);
 }
 
-#twikoo .tk-lightbox-image {
-	border-radius: var(--tk-radius);
+.tk-lightbox-image {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: auto;
+	min-width: 100px;
+	max-width: 95%;
+	height: auto;
+	min-height: 30px;
+	max-height: 95%;
+	/* 灯箱挂在 body 上，取不到 #twikoo 里定义的 --tk-* 变量，故用字面量 */
+	border-radius: 0.625em;
 	box-shadow: 0 0.5em 2em #00000066;
 }
 

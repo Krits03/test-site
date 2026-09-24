@@ -12,7 +12,7 @@ tags: [Site, Logs, Vercel]
 ## 2026-09-24
 
 - 改写文章 [blob-s3-imgbed：把 Vercel Blob 改造成 S3 兼容图床](/2026/blob-s3-imgbed)：同步项目改名与迁移到新仓库，接入方式改为 Twikoo 管理面板 S3 插件。
-- 评论美化：加载 Twikoo 2.x 自定义样式，修复输入提示浮层遮挡输入框的问题。
+- 评论美化：加载 Twikoo 2.x 自定义样式，修复输入提示浮层遮挡输入框、以及评论区图片预览（灯箱）图片堆在页面底部的问题。
 - 外部脚本本地化/替换：统计换用 Umami 官方云服务，`script.js` 自托管为 `public/site-res/umami.js`；Twikoo 的人机验证组件改从 zstatic 加载（Twikoo 2.x 内置的 jsdmirror 地址不稳定）。
 - favicon 改用 weavatar 头像，移除 site-res 下的自托管头像文件。
 
