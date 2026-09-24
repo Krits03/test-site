@@ -3,7 +3,8 @@ import css from '@zinkawaii/eslint-config-css'
 import { defineConfig } from 'eslint/config'
 
 export default antfu({
-	ignores: ['*.yaml'],
+	// public 下是自托管/镜像的第三方静态资源（umami.js、pako 等压缩产物），不按源码风格检查
+	ignores: ['*.yaml', 'public/**'],
 	stylistic: {
 		indent: 'tab',
 	},
