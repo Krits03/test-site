@@ -7,7 +7,7 @@ const basicConfig = {
 	description: 'wkr的个人博客，分享知识，一名开源爱好者.',
 	author: {
 		name: 'wkr',
-		avatar: 'https://site.wkr-dev.top/site-res/avatar.jpg',
+		avatar: 'https://weavatar.com/avatar/66eb9d166e7d453d0cc9a01e460860df84d8b8b5683869607e58fbcf58b32f95?s=160',
 		email: 'me@wkr-dev.top',
 		homepage: 'https://www.github.com/Krits03',
 	},
@@ -78,7 +78,7 @@ const blogConfig = {
 		// 自己网站的 Cloudflare Insights 统计服务
 		{ 'src': 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "4ae7cffe5f8246079a0890511f066c21"}', 'defer': true },
 		// Twikoo 评论系统
-		{ src: 'https://s4.zstatic.net/npm/twikoo@1.7.20/dist/twikoo.min.js', defer: true },
+		{ src: 'https://s4.zstatic.net/npm/twikoo@2.0.9/dist/twikoo.min.js', defer: true },
 	],
 
 	/** 文章统计配置 */
