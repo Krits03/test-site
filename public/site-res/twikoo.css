@@ -380,12 +380,44 @@
    因此这里要把定位相关的属性一并写全，不能只做视觉微调。 */
 .tk-lightbox {
 	position: fixed;
+	/* 同时写 inset 与四边 longhand：inset 要 Chrome 87+，低版本内核只认 longhand */
 	inset: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	z-index: 999;
 	display: block;
 	background-color: #000000b3;
 	backdrop-filter: blur(4px);
 }
+
+/* 关闭按钮：右上角圆形叉号。
+   灯箱本身已有整层点击关闭（twikoo 的 n.addEventListener('click', …)），
+   这里只补一个视觉上的可点区域，事件会冒泡到整层。 */
+.tk-lightbox::after {
+	content: "×";
+	position: absolute;
+	top: 1em;
+	right: 1em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5em;
+	height: 2.5em;
+	border-radius: 50%;
+	background-color: var(--c-bg-a80, #ffffffcc);
+	box-shadow: 0 0.06em 0.3em #00000033;
+	color: var(--c-text-1, #333);
+	font-size: 1.1rem;
+	font-weight: bold;
+	line-height: 1;
+	cursor: pointer;
+}
+
+/* 说明：这里不再写 :hover 反馈 —— 伪元素无法与 :hover 组合生效
+   （实测 Chromium 下 `.tk-lightbox:hover::after` 可用、`.tk-lightbox::after:hover` 无效，
+   而前者会在鼠标停在遮罩任意位置时都触发），故只保留 cursor: pointer 作为可点提示。 */
 
 .tk-lightbox-image {
 	position: absolute;
