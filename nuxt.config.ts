@@ -80,6 +80,8 @@ export default defineNuxtConfig({
 
 	// @keep-sorted
 	routeRules: {
+		// 文章文件更名为 blob-s3-imgbed.md 后的旧地址，保留永久跳转避免外链失效
+		'/2026/vercel-blob-to-s3': { redirect: { to: '/2026/blob-s3-imgbed', statusCode: 301 } },
 		'/api/stats': { prerender: true, headers: { 'Content-Type': 'application/json' } },
 		'/atom.xml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
 		'/favicon.ico': { redirect: { to: blogConfig.favicon } },
