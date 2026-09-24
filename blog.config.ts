@@ -73,10 +73,19 @@ const blogConfig = {
 
 	/** 向 <head> 中添加脚本 */
 	scripts: [
-		// 自己部署的 Umami 统计服务
-		{ 'src': 'https://zhi.zhilu.site/zhi.js', 'data-website-id': 'a1997c81-a42b-46f6-8d1d-8fbd67a8ef41', 'defer': true },
+		// Umami 官方云统计（cloud.umami.is）
+		// 脚本已本地化到 public/site-res/umami.js：官方 CDN 加载慢，本地加载不影响页面速度。
+		// 该脚本不依赖 script.src 推导上报地址，内置默认端点 https://gateway.umami.is/api/send，
+		// 因此本地化后上报不受影响（如需改网关，可加 data-host-url）。
+		// 更新脚本：curl -sL https://cloud.umami.is/script.js -o public/site-res/umami.js
+		{ 'src': '/site-res/umami.js', 'data-website-id': 'dce6932a-f94e-4645-8826-bb290a044d40', 'defer': true },
 		// 自己网站的 Cloudflare Insights 统计服务
 		{ 'src': 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "4ae7cffe5f8246079a0890511f066c21"}', 'defer': true },
+		// Twikoo 人机验证组件（Cap widget）
+		// Twikoo 2.x 内部把它的地址写死成了 cdn.jsdmirror.com，该镜像不稳定；
+		// 这里提前用 zstatic 定义好 <cap-widget>，Twikoo 检测到 customElements 中已存在就会跳过自带的加载。
+		// 若本脚本加载失败，Twikoo 会退回它自己的 CDN，评论流程不受影响。
+		{ src: 'https://s4.zstatic.net/npm/@cap.js/widget@0.1.58', defer: true, crossorigin: 'anonymous' },
 		// Twikoo 评论系统
 		{ src: 'https://s4.zstatic.net/npm/twikoo@2.0.9/dist/twikoo.min.js', defer: true },
 	],
