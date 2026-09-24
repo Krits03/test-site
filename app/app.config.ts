@@ -69,6 +69,7 @@ export default defineAppConfig({
 				title: '探索',
 				items: [
 					{ icon: 'tabler:rss', text: 'Atom订阅', url: '/atom.xml' },
+					{ icon: 'tabler:router', text: '状态监测', url: 'https://status.wkr-dev.top/' },
 					{ icon: 'ri:subway-line', text: '开往', url: 'https://www.travellings.cn/go.html' },
 				],
 			},
