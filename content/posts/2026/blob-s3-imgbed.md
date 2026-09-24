@@ -21,10 +21,6 @@ tags: [Twikoo, Vercel, S3, 图床, Blob]
 {结果}
 
 转向 Vercel Blob，并为其构建了一层 S3 兼容网关。
-
-{后续}
-
-项目改名为 blob-s3-imgbed 并迁到独立仓库，Next.js 应用上移到仓库根目录，Twikoo 接入方式也从「前端 imgUploader」换成了更安全的「管理面板 S3 插件」。
 ::
 
 ## 问题的由来
