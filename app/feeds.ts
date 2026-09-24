@@ -7,8 +7,8 @@ import { getFavicon, getGithubAvatar, getGithubIcon, getOciqGroupAvatar, getOicq
 export default [
 	// #region Clarity
 	{
-		name: '清晰体验',
-		desc: '使用 Clarity 博客主题构建的网站。',
+		name: '技术栈',
+		desc: '网站使用的技术栈。',
 		// @keep-sorted { "keys": ["date"] }
 		entries: [
 			myFeed,
