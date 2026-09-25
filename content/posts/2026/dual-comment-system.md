@@ -33,7 +33,9 @@ twikoo: {
 ---
 title: Twikoo
 description: 简洁的静态网站评论系统，自托管、数据存 MongoDB
+icon: https://twikoo.js.org/twikoo-logo-mini.png
 link: https://twikoo.js.org/
+class: gradient-card active
 ---
 ::
 
@@ -41,7 +43,9 @@ link: https://twikoo.js.org/
 ---
 title: giscus
 description: 基于 GitHub Discussions 的评论系统，评论存进仓库
+icon: https://giscus.app/apple-touch-icon.png
 link: https://giscus.app/
+class: gradient-card active
 ---
 ::
 
