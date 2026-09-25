@@ -12,7 +12,7 @@ tags: [Site, Logs, Vercel]
 ## 2026-09-25
 
 - 评论系统接入 giscus：与 Twikoo 组成双评论系统，评论区右上角可一键切换。
-- 新文章上线：[站点双评论系统的折腾过程](/2026/dual-comment-system)。
+- 新文章上线：[站点双评论系统简记](/2026/dual-comment-system)。
 
 ## 2026-09-24
 
@@ -22,11 +22,6 @@ tags: [Site, Logs, Vercel]
 - 脚本本地化：统计换 Umami 云服务；取消 jsdmirror，人机验证改从 zstatic 加载。
 - 不稳定地址改写：Cap 的 wasm、pako 自托管到 `public/site-res/cap/`，评论代码高亮 Prism 改用 zstatic。
 - favicon 换 weavatar 头像，移除自托管头像文件。
-
-## 2026-08-31
-
-- 维护无限期：开学。
-- 更新文章 banner。
 
 ## 2026-08-30
 
