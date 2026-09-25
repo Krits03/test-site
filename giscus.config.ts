@@ -49,16 +49,14 @@ export interface GiscusConfig {
 
 const giscusConfig: GiscusConfig = {
 	src: 'https://giscus.app/client.js',
-	repo: 'Krits03/blog',
-	/** TODO: 从 https://giscus.app/zh-CN 生成后填入 */
-	repoId: '',
+	repo: 'Krits03/GiscusComment',
+	repoId: 'R_kgDOUqpN-A',
 	category: 'Announcements',
-	/** TODO: 从 https://giscus.app/zh-CN 生成后填入 */
-	categoryId: '',
+	categoryId: 'DIC_kwDOUqpN-M4DGWdb',
 	mapping: 'pathname',
 	strict: false,
 	reactionsEnabled: true,
-	emitMetadata: false,
+	emitMetadata: true,
 	inputPosition: 'top',
 	lang: 'zh-CN',
 	loading: 'lazy',
