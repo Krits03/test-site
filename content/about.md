@@ -7,16 +7,16 @@ hideInfo: true
 aside: [toc, blog-about, site, me]
 ---
 
-这里是 wkr 的个人博客。平时把学到的东西、踩过的坑，还有一些零碎想法写在这儿。也算个开源爱好者，看到有意思的项目就忍不住想动手折腾一下。
+这里是 wkr 的个人博客。平时把一些零碎想法，事情写在这儿。也算个开源爱好者，看到有意思的项目就忍不住想动手折腾一下。
 
 ## 我是谁
 
 - 昵称 **wkr**，也写作 `Kr`，GitHub 上是 [Krits03](https://github.com/Krits03)
-- 一名开源爱好者，业余时间喜欢自己玩点东西
+- 一名学生，开源爱好者，业余时间喜欢自己玩点东西
 
 ## 这个站点
 
-站点 2026 年 3 月上线，用 [Clarity](https://github.com/L33Z22L11/blog-v3) 搭的（主题名 Clarity，作者是纸鹿Zhilu），我在它基础上改了不少自己的东西。
+站点于 2026 年 3 月上线，用 [Clarity](https://github.com/L33Z22L11/blog-v3) 搭的（主题名 Clarity，作者是纸鹿Zhilu），我在它基础上改了不少自己的东西。
 
 文章大致分这么几类：
 
@@ -44,7 +44,8 @@ aside: [toc, blog-about, site, me]
 | 代码高亮 | Shiki |
 | 包管理 | pnpm |
 
-还有一些其他的:
+由于大量对博客站的提交，导致...
+![](https://github-card.kr033.top/api/cards/most-commit-language?username=Krits03&theme=default&animation=stagger)
 
 ## 折腾记录
 
