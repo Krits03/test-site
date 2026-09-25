@@ -1,6 +1,6 @@
 ---
 title: 关于
-description: 关于我的博客
+description: 关于我和我的博客
 date: 2026-09-26 00:05:00
 updated: 2026-09-26 00:05:00
 hideInfo: true
