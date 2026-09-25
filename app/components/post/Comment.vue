@@ -32,6 +32,37 @@ const switchItems: { value: CommentSystem, label: string, icon: string }[] = [
 const twikooInited = ref(false)
 const giscusInited = ref(false)
 
+/** 评论是否已真正渲染出来 / 已判定失败，用于把「静默失败」变成可见提示 */
+const twikooReady = ref(false)
+const twikooFailed = ref(false)
+const giscusReady = ref(false)
+const giscusFailed = ref(false)
+
+/** 超过该时限仍未渲染出评论区就判定为失败 */
+const COMMENT_READY_TIMEOUT = 15_000
+/** 就绪状态的轮询间隔 */
+const COMMENT_POLL_INTERVAL = 500
+
+/**
+ * 轮询等待评论组件真正渲染出来。
+ * 脚本或后端任一处不可达时，评论区只会永远停在「评论加载中...」且控制台毫无线索（难以排查），
+ * 这里在超时后给出可见提示与报错，并继续等待（迟到的成功会清掉提示）。
+ */
+function pollCommentReady(ready: Ref<boolean>, failed: Ref<boolean>, check: () => boolean, label: string, startedAt = Date.now()) {
+	setTimeout(() => {
+		if (check()) {
+			ready.value = true
+			failed.value = false
+			return
+		}
+		if (!failed.value && Date.now() - startedAt > COMMENT_READY_TIMEOUT) {
+			failed.value = true
+			console.error(`[comment] ${label} 在 ${COMMENT_READY_TIMEOUT / 1000}s 内未渲染完成，请检查对应脚本与服务是否可达`)
+		}
+		pollCommentReady(ready, failed, check, label, startedAt)
+	}, COMMENT_POLL_INTERVAL)
+}
+
 /** giscus 的 iframe 与脚本同源，postMessage 需指定正确 origin（支持自建/镜像 src） */
 function giscusOrigin() {
 	if (!import.meta.client)
@@ -52,13 +83,24 @@ function initTwikoo() {
 	if (twikooInited.value)
 		return
 	twikooInited.value = true
-	window.twikoo?.init?.({
+
+	// <head> 中的 twikoo.min.js 未加载成功（defer 脚本在 hydration 之前就已执行完毕）
+	if (!window.twikoo?.init) {
+		twikooFailed.value = true
+		console.error('[comment] window.twikoo 不存在：<head> 中的 twikoo.min.js 未加载成功，请检查该脚本地址是否可达')
+		return
+	}
+
+	window.twikoo.init({
 		envId: appConfig.twikoo?.envId,
 		// 评论内代码高亮的 Prism 资源：Twikoo 默认走 cdn.jsdelivr.net（国内不稳定）
 		prismCdn: appConfig.twikoo?.prismCdn,
 		// twikoo 会把挂载后的元素变为 #twikoo
 		el: '#twikoo',
 	})
+
+	// 脚本存在也可能因为后端不可达而一直转圈，继续观察是否真的渲染出评论区
+	pollCommentReady(twikooReady, twikooFailed, () => Boolean(document.querySelector('#twikoo .tk-comments')), 'Twikoo')
 }
 
 function initGiscus() {
@@ -74,6 +116,11 @@ function initGiscus() {
 	script.src = giscusConfig.src
 	script.async = true
 	script.crossOrigin = 'anonymous'
+	// 脚本本身加载失败（域名不可达、被拦截等）时给出提示与线索
+	script.addEventListener('error', () => {
+		giscusFailed.value = true
+		console.error(`[comment] giscus 脚本加载失败：${giscusConfig.src}`)
+	})
 
 	const attrs: Record<string, string> = {
 		'data-repo': giscusConfig.repo,
@@ -96,7 +143,16 @@ function initGiscus() {
 		script.setAttribute(key, value)
 
 	container.appendChild(script)
+
+	// 脚本加载成功也可能因为 giscus 站点不可达而一直空白，继续观察 iframe 是否真的出现
+	pollCommentReady(giscusReady, giscusFailed, () => Boolean(document.querySelector('iframe.giscus-frame')), 'giscus')
 }
+
+/** giscus 的 iframe 渲染完成后会向父窗口发消息，以此判断它真的加载出来了（而不是只拿到了脚本） */
+useEventListener(window, 'message', (e) => {
+	if (e.origin === giscusOrigin() && e.data?.giscus)
+		giscusReady.value = true
+})
 
 /** 按需初始化：首次显示某系统时才加载其脚本，切走后用 v-show 保活避免重复请求评论 */
 function activate(system: CommentSystem) {
@@ -230,16 +286,32 @@ useHead({
 		</template>
 	</Tooltip>
 
-	<div v-show="activeSystem === 'twikoo'" id="twikoo">
-		<p>评论加载中...</p>
+	<div v-show="activeSystem === 'twikoo'">
+		<p v-if="twikooFailed" class="comment-hint error">
+			<Icon name="tabler:alert-triangle" />
+			Twikoo 评论加载失败，请刷新页面重试
+		</p>
+
+		<p v-else-if="!twikooReady" class="comment-hint">
+			评论加载中...
+		</p>
+
+		<div id="twikoo" />
 	</div>
 
 	<div v-show="activeSystem === 'giscus'" class="giscus-wrap">
-		<div v-if="giscusConfigured" class="giscus">
-			<p>评论加载中...</p>
-		</div>
+		<p v-if="giscusFailed" class="comment-hint error">
+			<Icon name="tabler:alert-triangle" />
+			Giscus 评论加载失败，请刷新页面重试
+		</p>
 
-		<p v-else class="giscus-hint">
+		<p v-else-if="giscusConfigured && !giscusReady" class="comment-hint">
+			评论加载中...
+		</p>
+
+		<div v-if="giscusConfigured" class="giscus" />
+
+		<p v-else class="comment-hint">
 			<Icon name="tabler:settings" />
 			giscus 尚未配置，请在根目录
 			<code>giscus.config.ts</code>
@@ -300,11 +372,15 @@ useHead({
 	margin: 2em 0;
 }
 
-.giscus-hint {
+.comment-hint {
 	display: flex;
 	align-items: center;
 	gap: 0.4em;
 	color: var(--c-text-3);
+
+	&.error {
+		color: var(--c-error);
+	}
 
 	> code {
 		padding: 0.1em 0.3em;

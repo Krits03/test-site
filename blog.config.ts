@@ -96,9 +96,14 @@ const blogConfig = {
 		},
 		// Twikoo 人机验证组件（Cap widget）
 		// Twikoo 2.x 内部把它的地址写死成了 cdn.jsdmirror.com，该镜像不稳定；
-		// 这里提前用 zstatic 定义好 <cap-widget>，Twikoo 检测到 customElements 中已存在就会跳过自带的加载。
-		// 若本脚本加载失败，Twikoo 会退回它自己的 CDN，评论流程不受影响。
-		{ src: 'https://s4.zstatic.net/npm/@cap.js/widget@0.1.58', defer: true, crossorigin: 'anonymous' },
+		// 这里提前定义好 <cap-widget>，Twikoo 检测到 customElements 中已存在就会跳过自带的加载。
+		// 已本地化到 public/site-res/cap/cap.min.js，整条 Cap 链路（组件 + wasm + 解压库）均为同源加载：
+		// 镜像站都不可靠——zstatic 会限流（429，且 429 响应不带 ACAO，crossorigin 脚本会直接 CORS 失败），
+		// 不带包内路径的地址还会 302 到 unpkg-www.us-west-1.workers.dev（国内 DNS 污染、不可达）。
+		// 且该脚本是 defer：一旦挂起会拖到超时才放行后续脚本与 hydration，评论区会长时间停在「评论加载中...」。
+		// 更新（版本需与下面 wasm 的版本一致）：
+		// curl -sL -o public/site-res/cap/cap.min.js https://cdn.jsdelivr.net/npm/@cap.js/widget@0.1.58/cap.min.js
+		{ src: '/site-res/cap/cap.min.js', defer: true },
 		// Twikoo 评论系统
 		// 官方 2.x 的语法目标为 ES2022，最低支持 Chrome/Edge 94、Firefox 93、Safari 15.4（更低的浏览器不受支持）
 		{ src: 'https://s4.zstatic.net/npm/twikoo@2.0.9/dist/twikoo.min.js', defer: true },
