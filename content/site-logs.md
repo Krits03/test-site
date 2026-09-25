@@ -11,16 +11,14 @@ tags: [Site, Logs, Vercel]
 
 ## 2026-09-25
 
-- 评论系统接入 giscus：与 Twikoo 组成双评论系统，评论区右上角可一键切换。
+- 评论系统使用 giscus：与 Twikoo 组成双评论系统，评论区右上角切换。
 - 新文章上线：[站点双评论系统简记](/2026/dual-comment-system)。
 
 ## 2026-09-24
 
 - 改写文章 [blob-s3-imgbed](/2026/blob-s3-imgbed)：同步改名与新仓库，接入方式改为 Twikoo 面板 S3 插件。
 - 评论升级 Twikoo 2.x：自定义样式美化，修复提示浮层遮挡输入框、灯箱图片堆积底部，灯箱加关闭按钮。
-- 评论兼容：按 Twikoo 2.x 上游基线（ES2022）使用官方产物，不做语法降级。
-- 脚本本地化：统计换 Umami 云服务；取消 jsdmirror，人机验证改从 zstatic 加载。
-- 不稳定地址改写：Cap 的 wasm、pako 自托管到 `public/site-res/cap/`，评论代码高亮 Prism 改用 zstatic。
+- 脚本本地化：统计换 Umami 云服务。
 - favicon 换 weavatar 头像，移除自托管头像文件。
 
 ## 2026-08-30
