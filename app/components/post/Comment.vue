@@ -1,7 +1,9 @@
 <script setup lang="tsx">
 import type { TippyComponent } from 'vue-tippy'
+import type { CommentSystem } from '~/types/comment'
 
 const appConfig = useAppConfig()
+const colorMode = useColorMode()
 
 const commentEl = useTemplateRef('comment')
 const popoverEl = useTemplateRef<TippyComponent>('popover')
@@ -10,6 +12,110 @@ const popoverInputEl = useTemplateRef('popover-input')
 const showUndo = ref(false)
 
 const popoverBind = ref<TippyComponent['$props']>({})
+
+const giscusConfig = appConfig.comment.giscus
+/** giscus 必填项齐全时才注入脚本，否则展示配置提示 */
+const giscusConfigured = computed(() => Boolean(giscusConfig.repo && giscusConfig.repoId && giscusConfig.categoryId))
+
+/** 评论系统选择，记忆在 localStorage；仅在挂载后读取，避免服务端与客户端水合不一致 */
+const storedSystem = useLocalStorage<CommentSystem>('comment-system', appConfig.comment.default, { initOnMounted: true })
+const activeSystem = computed<CommentSystem>({
+	get: () => appConfig.comment.enableSwitch ? storedSystem.value : appConfig.comment.default,
+	set: (value) => { storedSystem.value = value },
+})
+
+const switchItems: { value: CommentSystem, label: string, icon: string }[] = [
+	{ value: 'twikoo', label: 'Twikoo', icon: 'tabler:message-dots' },
+	{ value: 'giscus', label: 'giscus', icon: 'simple-icons:github' },
+]
+
+const twikooInited = ref(false)
+const giscusInited = ref(false)
+
+/** giscus 的 iframe 与脚本同源，postMessage 需指定正确 origin（支持自建/镜像 src） */
+function giscusOrigin() {
+	if (!import.meta.client)
+		return 'https://giscus.app'
+	try {
+		return new URL(giscusConfig.src, window.location.origin).origin
+	}
+	catch {
+		return 'https://giscus.app'
+	}
+}
+
+function giscusTheme() {
+	return colorMode.value === 'dark' ? giscusConfig.darkTheme : giscusConfig.lightTheme
+}
+
+function initTwikoo() {
+	if (twikooInited.value)
+		return
+	twikooInited.value = true
+	window.twikoo?.init?.({
+		envId: appConfig.twikoo?.envId,
+		// 评论内代码高亮的 Prism 资源：Twikoo 默认走 cdn.jsdelivr.net（国内不稳定）
+		prismCdn: appConfig.twikoo?.prismCdn,
+		// twikoo 会把挂载后的元素变为 #twikoo
+		el: '#twikoo',
+	})
+}
+
+function initGiscus() {
+	if (giscusInited.value || !giscusConfigured.value)
+		return
+
+	const container = document.querySelector<HTMLElement>('.giscus')
+	if (!container)
+		return
+	giscusInited.value = true
+
+	const script = document.createElement('script')
+	script.src = giscusConfig.src
+	script.async = true
+	script.crossOrigin = 'anonymous'
+
+	const attrs: Record<string, string> = {
+		'data-repo': giscusConfig.repo,
+		'data-repo-id': giscusConfig.repoId,
+		'data-category': giscusConfig.category,
+		'data-category-id': giscusConfig.categoryId,
+		'data-mapping': giscusConfig.mapping,
+		'data-strict': giscusConfig.strict ? '1' : '0',
+		'data-reactions-enabled': giscusConfig.reactionsEnabled ? '1' : '0',
+		'data-emit-metadata': giscusConfig.emitMetadata ? '1' : '0',
+		'data-input-position': giscusConfig.inputPosition,
+		'data-theme': giscusTheme(),
+		'data-lang': giscusConfig.lang,
+		'data-loading': giscusConfig.loading,
+	}
+	if (giscusConfig.term)
+		attrs['data-term'] = giscusConfig.term
+
+	for (const [key, value] of Object.entries(attrs))
+		script.setAttribute(key, value)
+
+	container.appendChild(script)
+}
+
+/** 按需初始化：首次显示某系统时才加载其脚本，切走后用 v-show 保活避免重复请求评论 */
+function activate(system: CommentSystem) {
+	if (system === 'giscus')
+		initGiscus()
+	else
+		initTwikoo()
+}
+
+onMounted(() => activate(activeSystem.value))
+watch(activeSystem, activate)
+
+/** 跟随站点明暗主题，向 giscus iframe 推送新主题 */
+watch(() => colorMode.value, () => {
+	if (!giscusInited.value)
+		return
+	const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
+	iframe?.contentWindow?.postMessage({ giscus: { setConfig: { theme: giscusTheme() } } }, giscusOrigin())
+})
 
 /** 评论区链接守卫 */
 useEventListener(commentEl, 'click', (e) => {
@@ -61,23 +167,30 @@ useHead({
 		tagPosition: 'bodyClose',
 	}],
 })
-
-onMounted(() => {
-	window.twikoo?.init?.({
-		envId: appConfig.twikoo?.envId,
-		// 评论内代码高亮的 Prism 资源：Twikoo 默认走 cdn.jsdelivr.net（国内不稳定）
-		prismCdn: appConfig.twikoo?.prismCdn,
-		// twikoo 会把挂载后的元素变为 #twikoo
-		el: '#twikoo',
-	})
-})
 </script>
 
 <template>
-<section ref="comment" class="z-comment">
-	<h3 class="text-creative">
-		评论区
-	</h3>
+<section id="comment" ref="comment" class="z-comment">
+	<div class="comment-head">
+		<h3 class="text-creative">
+			评论区
+		</h3>
+
+		<div v-if="appConfig.comment.enableSwitch" class="comment-switch" role="group" aria-label="切换评论系统">
+			<button
+				v-for="item in switchItems"
+				:key="item.value"
+				type="button"
+				class="switch-item"
+				:class="{ active: item.value === activeSystem }"
+				:aria-pressed="item.value === activeSystem"
+				@click="activeSystem = item.value"
+			>
+				<Icon :name="item.icon" />
+				<span>{{ item.label }}</span>
+			</button>
+		</div>
+	</div>
 
 	<!-- interactive 默认会把气泡移动到 triggerTarget 的父元素上 -->
 	<Tooltip
@@ -117,8 +230,21 @@ onMounted(() => {
 		</template>
 	</Tooltip>
 
-	<div id="twikoo">
+	<div v-show="activeSystem === 'twikoo'" id="twikoo">
 		<p>评论加载中...</p>
+	</div>
+
+	<div v-show="activeSystem === 'giscus'" class="giscus-wrap">
+		<div v-if="giscusConfigured" class="giscus">
+			<p>评论加载中...</p>
+		</div>
+
+		<p v-else class="giscus-hint">
+			<Icon name="tabler:settings" />
+			giscus 尚未配置，请在根目录
+			<code>giscus.config.ts</code>
+			中填写 repoId 与 categoryId。
+		</p>
 	</div>
 </section>
 </template>
@@ -126,11 +252,71 @@ onMounted(() => {
 <style scoped>
 .z-comment {
 	margin: 3rem 1rem;
+}
+
+.comment-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-top: 3rem;
 
 	> h3 {
-		margin-top: 3rem;
+		margin: 0;
 		font-size: 1.25rem;
 	}
+}
+
+.comment-switch {
+	display: flex;
+	gap: 0.15rem;
+	padding: 0.15rem;
+	border: 1px solid var(--c-border);
+	border-radius: 0.6rem;
+	background-color: var(--c-bg-2);
+	font-size: 0.8rem;
+
+	> .switch-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3em;
+		padding: 0.25em 0.7em;
+		border-radius: 0.45rem;
+		color: var(--c-text-2);
+		transition: color 0.2s, background-color 0.2s;
+
+		&:hover {
+			color: var(--c-primary);
+		}
+
+		&.active {
+			background-color: var(--c-bg);
+			color: var(--c-primary);
+		}
+	}
+}
+
+.giscus-wrap {
+	margin: 2em 0;
+}
+
+.giscus-hint {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	color: var(--c-text-3);
+
+	> code {
+		padding: 0.1em 0.3em;
+		border-radius: 0.3em;
+		background-color: var(--c-bg-2);
+		font-family: var(--font-monospace);
+	}
+}
+
+:deep(.giscus-frame) {
+	width: 100%;
+	border: none;
 }
 
 :deep() > [data-tippy-root] > .tippy-box {

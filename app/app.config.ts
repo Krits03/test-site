@@ -1,7 +1,9 @@
+import type { CommentSystem } from '~/types/comment'
 import type { Nav, NavItem } from '~/types/nav'
 import { pascalCase } from 'es-toolkit/string'
 import { Temporal } from 'temporal-polyfill'
 import blogConfig from '~~/blog.config'
+import giscusConfig from '~~/giscus.config'
 import { name, version } from '~~/package.json'
 
 // 图标查询：https://yesicon.app/tabler
@@ -11,6 +13,16 @@ import { name, version } from '~~/package.json'
 export default defineAppConfig({
 	// 将 blog.config 中的配置项复制到 appConfig，方便调用
 	...blogConfig,
+
+	/** 评论系统：Twikoo 与 giscus 双系统，可在评论区右上角切换 */
+	comment: {
+		/** 默认展示的评论系统 */
+		default: 'twikoo' as CommentSystem,
+		/** 是否显示切换按钮；关闭后仅保留默认系统 */
+		enableSwitch: true,
+		/** giscus 独立配置，见根目录 giscus.config.ts */
+		giscus: giscusConfig,
+	},
 
 	component: {
 		alert: {
