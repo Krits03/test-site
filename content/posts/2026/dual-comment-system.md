@@ -3,6 +3,7 @@ title: 站点双评论系统简记
 description: 从单点 Twikoo 到 Twikoo + giscus 双评论系统
 date: 2026-09-25 21:55:00
 updated: 2026-09-25 21:55:00
+image: https://vercel-blob.api.kr033.top/api/download/post/twikoo+giscus/20260925/1790346624916-1790346541029.jpg
 categories: [技术]
 aside: [toc]
 tags: [Twikoo, giscus, 评论系统, Nuxt, Vue]
