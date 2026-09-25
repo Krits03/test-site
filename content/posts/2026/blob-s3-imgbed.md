@@ -12,35 +12,27 @@ tags: [Twikoo, Vercel, S3, 图床, Blob]
 ::timeline
 {背景}
 
-博客评论系统 Twikoo 的图片上传依赖第三方图床，近期服务稳定性无法保证。
+博客评论系统 Twikoo 的图片上传依赖smms图床，但是smms不免费了:(
 
 {尝试}
 
-考虑迁移至 Cloudflare R2，因支付方式绑定受限而搁置。
+考虑迁移至 Cloudflare R2，支付方式绑定受限。
 
 {结果}
 
-转向 Vercel Blob，并为其构建了一层 S3 兼容网关。
+转向 Vercel Blob，通过构建了一层 S3 兼容网关，进行转换。
 ::
 
 ## 问题的由来
 
 本站评论区由 [Twikoo](https://twikoo.js.org/) 驱动，其图片上传通过 `imgUploader` 回调实现，存储需要自行对接图床。此前一直使用 sm.ms，近期该服务可靠性明显下降：已上传的图片在数日后出现失效，且无明确公告。免费第三方图床的可持续性本就存疑，迁移势在必行。
 
-候选方案的评估结果如下：
-
-| 方案 | 问题 |
-| --- | --- |
-| Cloudflare R2 | 需要绑定支付方式，本人验证无法通过 |
-| 直接使用 Vercel Blob SDK | 仅支持服务端调用，浏览器端无法直接使用 |
-| AWS S3 | 成本与账户管理开销与需求不匹配（因本人特殊原因无法使用） |
-| 自建图床 | 运维成本过高 |
 
 排除以上选项后，Vercel Blob 成为最合适的存储后端：开通即用，免费额度为 1GB 存储与每月 10GB 带宽，与本站评论区的图片量级完全匹配；且博客本身部署于 Vercel，存储与计算处于同一生态。
 
 但它存在一个关键障碍：**Vercel Blob 的 API 与 S3 不兼容**——既不支持 S3 的 XML 协议，也不支持 SigV4 签名认证，官方 SDK 又只能在服务端运行。而 Twikoo 的上传行为发生在浏览器端，存储能力无法直接接入。
 
-解决思路有二：编写一个专用的上传转发接口，或者将 Blob 完整封装为 S3 兼容服务。后者具备更普遍的复用价值，于是实现了本项目——它后来改名为 **blob-s3-imgbed**，并迁到了独立仓库：
+解决思路有二：编写一个专用的上传转发接口，或者将 Blob 完整封装为 S3 兼容服务。后来改名为 **blob-s3-imgbed**，并迁到了独立仓库：
 
 ::link-card
 ---
@@ -245,8 +237,8 @@ twikoo.init({
 
 | 资源 | 免费额度 | 超出后 |
 | --- | --- | --- |
-| Blob 存储容量 | 1 GB / 月 | **无法继续使用 Blob**，需等待 30 天额度重置或升级 Pro |
-| Simple Operations | 前 10,000 次 | 同上 |
+| Blob 存储容量 | 1 GB / 月 | 有点少(4MB图片约250张，实际上每次约1-2MB) |
+| Simple Operations | 前 10,000 次 | Hobby计划超限停用，30天重置 |
 | Advanced Operations | 前 2,000 次 | 同上 |
 | Blob Data Transfer | 前 10 GB | 同上 |
 
@@ -307,7 +299,7 @@ twikoo.init({
 
 ::folding{title="S3 客户端报 SignatureDoesNotMatch？"}
 
-依次检查三件事：`S3_ACCESS_KEY` / `S3_SECRET_KEY` 是否与客户端一致；`endpoint` 是否为 `https://<域名>/s3`（**不要带尾部斜杠**）；是否设置了 `forcePathStyle: true`。
+依次检查：`S3_ACCESS_KEY` / `S3_SECRET_KEY` 是否与客户端一致；`endpoint` 是否为 `https://<域名>/s3`（**不要带尾部斜杠**）；是否设置了 `forcePathStyle: true`。
 ::
 
 ::folding{title="上传成功但图片不显示？"}
@@ -317,7 +309,7 @@ Twikoo 场景下通常是 `S3_CDN_URL` 留空或填错，应填 `https://<域名
 
 ::folding{title="能上传多大的文件？"}
 
-约 4.5 MB —— 这是 Vercel Serverless Function 的请求体上限。更大的文件建议直接用 Vercel Blob 客户端的直传 API。
+Max约4.5 MB —— 这是 Vercel Serverless Function 的请求体上限。更大的文件建议直接用 Vercel Blob 客户端走API。
 ::
 
 ::folding{title="免费额度用完了会怎样？"}
@@ -327,11 +319,4 @@ Hobby 版含 1 GB 存储、1 万次 Simple Operations、2 千次 Advanced Operat
 
 ## 结语
 
-这次改动比上次发文时更多：项目从 `vercel-blob-to-s3` 改名为 **blob-s3-imgbed** 并迁到独立仓库，Next.js 应用从子目录上移到仓库根目录，Twikoo 的接入方式也从「前端 `imgUploader`」换成了推荐的「管理面板 S3 插件」——密钥终于不用写进页面里了。原先的 Cloudflare Workers 版本没有跟着迁过来，新仓库里只有 Vercel 实现。
-
-仓库里现在有两份文档：`DEPLOY.md` 是从零部署到 Vercel 的完整步骤，`TWIKOO_S3_CONFIG.md` 是 S3 插件的字段说明与排错表，比这篇文章更细。如有类似需求——不限于 Twikoo，任何需要在浏览器端使用 Vercel Blob 的场景——欢迎使用或提交 issue。
-
-本站评论图床已切换，欢迎在评论区验证。
-
-这应该是开学前的最后一篇了awa.
-之后我会出一篇详细部署文章，敬请期待.
+完...
