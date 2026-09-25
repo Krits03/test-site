@@ -4,7 +4,7 @@ description: 关于我和我的博客
 date: 2026-09-26 00:05:00
 updated: 2026-09-26 00:05:00
 hideInfo: true
-aside: [toc, blog-about, site, me]
+aside: [toc, about, site, me]
 ---
 
 这里是 wkr 的个人博客。平时把一些零碎想法，事情写在这儿。也算个开源爱好者，看到有意思的项目就忍不住想动手折腾一下。

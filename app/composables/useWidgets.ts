@@ -2,21 +2,27 @@ import { pascalCase } from 'es-toolkit/string'
 import {
 	ContentRenderer,
 	LazyBlogWidget,
+	LazyWidgetAbout,
 	LazyWidgetBlogLog,
 	LazyWidgetBlogStats,
 	LazyWidgetBlogTech,
 	LazyWidgetCommGroup,
 	LazyWidgetEmpty,
+	LazyWidgetMe,
+	LazyWidgetSite,
 	LazyWidgetToc,
 } from '#components'
 
 // @keep-sorted
 const rawWidgets = {
+	LazyWidgetAbout,
 	LazyWidgetBlogLog,
 	LazyWidgetBlogStats,
 	LazyWidgetBlogTech,
 	LazyWidgetCommGroup,
 	LazyWidgetEmpty,
+	LazyWidgetMe,
+	LazyWidgetSite,
 	LazyWidgetToc,
 }
 
