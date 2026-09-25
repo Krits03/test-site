@@ -1,5 +1,5 @@
 ---
-title: blob-s3-imgbed：把 Vercel Blob 改造成 S3 兼容图床
+title: 把 Vercel Blob 改造成 S3 兼容图床
 description: 把 Vercel Blob 包装成 S3 兼容 + 简单 HTTP 双接口的对象存储网关，接入 Twikoo 评论图床
 date: 2026-08-30 20:11:00
 updated: 2026-09-24 22:40:00
