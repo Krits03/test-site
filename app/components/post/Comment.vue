@@ -26,7 +26,7 @@ const activeSystem = computed<CommentSystem>({
 
 const switchItems: { value: CommentSystem, label: string, icon: string }[] = [
 	{ value: 'twikoo', label: 'Twikoo', icon: 'tabler:message-dots' },
-	{ value: 'giscus', label: 'giscus', icon: 'simple-icons:github' },
+	{ value: 'giscus', label: 'Giscus', icon: 'simple-icons:github' },
 ]
 
 const twikooInited = ref(false)
