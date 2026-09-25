@@ -45,6 +45,17 @@ export default [
 				date: '2026-08-28',
 				comment: 'Q群友 ~♡',
 			},
+			{
+				author: '雨后初晴社',
+				desc: '雨中，听雨声轻灵。雨后，赏水木清华。聆听这广阔天地，感受那动人瞬间。',
+				link: 'https://www.rainafter.cn',
+				feed: 'https://www.rainafter.cn/friends/',
+				icon: 'https://image.rainafter.cn/i/2025/03/08/67cbf3ae27bed.jpg',
+				avatar: 'https://image.rainafter.cn/i/2025/03/08/67cbf3ae27bed.jpg',
+				archs: ['分享', '技术'],
+				date: '2026-09-25',
+				comment: '技术参考，借鉴',
+			},
 		],
 	},
 	// #endregion
