@@ -43,7 +43,7 @@ export default [
 				avatar: 'https://yulliil.moe/blog/assets/yulliil.jpg',
 				archs: ['Vue', '国内 CDN'],
 				date: '2026-08-28',
-				comment: 'Q群友 ~♡',
+				comment: '~♡',
 			},
 			{
 				author: '雨后初晴社',
