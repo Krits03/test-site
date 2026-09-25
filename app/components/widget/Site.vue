@@ -5,7 +5,7 @@ const siteInfo = [
 	{ label: '上线时间', value: appConfig.timeEstablished, tip: `已运行 ${timeElapse(appConfig.timeEstablished)}` },
 	{ label: '主题', value: 'Clarity' },
 	{ label: '域名', value: getDomain(appConfig.url) },
-	{ label: '评论', value: 'Twikoo + giscus' },
+	{ label: '评论', value: 'Twikoo + Giscus' },
 	{ label: '协议', value: appConfig.copyright.abbr },
 ]
 </script>
