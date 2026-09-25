@@ -96,7 +96,7 @@ export default defineAppConfig({
 				title: '信息',
 				items: [
 					{ icon: 'simple-icons:nuxt', text: `主题: ${pascalCase(name)} ${version}`, url: 'https://github.com/L33Z22L11/blog-v3' },
-					{ icon: 'tabler:color-swatch', text: '主题和组件文档', url: '/theme' },
+					//	{ icon: 'tabler:color-swatch', text: '主题和组件文档', url: '/theme' },
 					{ icon: 'tabler:certificate', text: '萌ICP备20260477号', url: 'https://icp.gov.moe/?keyword=20260477' },
 				],
 			},
