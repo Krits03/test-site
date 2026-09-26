@@ -85,6 +85,9 @@ export default defineNuxtConfig({
 		'/api/stats': { prerender: true, headers: { 'Content-Type': 'application/json' } },
 		'/atom.xml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
 		'/favicon.ico': { redirect: { to: blogConfig.favicon } },
+		// 人类可读的订阅源与站点地图页面，随每次构建重新生成
+		'/feed': { prerender: true },
+		'/sitemap': { prerender: true },
 		'/subscriptions.opml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
 	},
 
@@ -266,5 +269,8 @@ ${packageJson.homepage}
 		// 浏览器正在移除 XSLT，打开 sitemap.xml 会弹出「functionality is being removed」弃用警告，
 		// 这里关掉样式表，直接输出纯 XML（对搜索引擎与阅读器行为无影响）。
 		xsl: false,
+		// 强制在构建时生成 sitemap.xml 并作为静态文件提供，
+		// 保证每次构建都会刷新站点地图（含新增页面与文章），不依赖运行时按请求生成。
+		zeroRuntime: true,
 	},
 })
