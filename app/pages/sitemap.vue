@@ -12,7 +12,6 @@ useSeoMeta({
 })
 
 const sitemapUrl = new URL('/sitemap.xml', blogConfig.url).toString()
-const opmlUrl = new URL('/subscriptions.opml', blogConfig.url).toString()
 
 /** 站点主要页面：取自侧栏导航，并补充订阅入口 */
 const pages: NavItem[] = [
@@ -62,7 +61,7 @@ const listGrouped = computed(() => Object.entries(groupBy(listSorted.value, getA
 		<div class="intro-actions">
 			<ZButton primary to="/sitemap.xml" icon="tabler:file-code" text="查看原始 XML" />
 			<ZButton to="/atom.xml" icon="tabler:rss" text="Atom 订阅" />
-			<ZButton :to="opmlUrl" icon="tabler:list-details" text="友链订阅" />
+			<ZButton external to="/subscriptions.opml" icon="tabler:list-details" text="友链订阅" />
 		</div>
 	</section>
 

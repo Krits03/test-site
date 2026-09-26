@@ -14,6 +14,7 @@ const props = withDefaults(defineProps<{
 	tipTransform: String,
 })
 
+const appConfig = useAppConfig()
 const today = Temporal.Now.plainDateISO()
 const zdt = computed(() => {
 	try {
@@ -52,6 +53,7 @@ const tooltip = computed(() => mounted.value && zdt.value
 	<NuxtTime
 		v-else
 		:datetime="toInstantString(zdt)"
+		:locale="appConfig.language"
 		:relative
 		:year="zdt.year === today.year ? undefined : '2-digit'"
 		month="long"

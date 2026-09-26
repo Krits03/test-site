@@ -83,6 +83,7 @@ export default defineNuxtConfig({
 		// 文章文件更名为 blob-s3-imgbed.md 后的旧地址，保留永久跳转避免外链失效
 		'/2026/vercel-blob-to-s3': { redirect: { to: '/2026/blob-s3-imgbed', statusCode: 301 } },
 		'/api/stats': { prerender: true, headers: { 'Content-Type': 'application/json' } },
+		'/archive': { prerender: true },
 		'/atom.xml': { prerender: true, headers: { 'Content-Type': 'application/xml' } },
 		'/favicon.ico': { redirect: { to: blogConfig.favicon } },
 		// 人类可读的订阅源与站点地图页面，随每次构建重新生成
@@ -95,7 +96,9 @@ export default defineNuxtConfig({
 		// @keep-sorted
 		public: {
 			arch,
-			buildTime: Temporal.Now.zonedDateTimeISO().toString(),
+			// 用 Instant 的 RFC 3339 形式（如 2026-09-26T03:53:51.274Z），
+			// zonedDateTimeISO 会带 Temporal 的 [时区] 注解，Atom/OPML 按规范不接受
+			buildTime: Temporal.Now.instant().toString(),
 			// EdgeOne 检测暂时不可用
 			ci: env.TENCENTCLOUD_RUNENV === 'SCF' ? 'EdgeOne' : ciName || '',
 			nodeVersion,

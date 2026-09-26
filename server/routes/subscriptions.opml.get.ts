@@ -27,10 +27,11 @@ function flattenGroups(groups: FeedGroup[]) {
 }
 
 export default defineEventHandler(async (_e) => {
+	// myFeed 已单独置顶，友链分组中可能再次包含它，按订阅地址去重
 	const outlines = [
 		mapEntry(myFeed),
 		...flattenGroups(feeds),
-	]
+	].filter((item, index, all) => all.findIndex(({ $xmlUrl }) => $xmlUrl === item.$xmlUrl) === index)
 
 	const opml = {
 		$version: '2.0',

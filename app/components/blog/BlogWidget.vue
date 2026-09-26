@@ -24,7 +24,7 @@ defineExpose({ body })
 		<slot name="title">
 			{{ title }}
 		</slot>
-		<span v-if="$slots.action" class="seperator" />
+		<span v-if="$slots.action" class="separator" />
 		<slot name="action" />
 	</hgroup>
 
@@ -84,7 +84,7 @@ defineExpose({ body })
 		display: none;
 	}
 
-	> .seperator {
+	> .separator {
 		flex-grow: 1;
 	}
 

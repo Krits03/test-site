@@ -4,7 +4,7 @@ date: 2026-02-14 20:27:59
 updated: 2026-02-03 02:50:11
 hideInfo: true
 
-aside: [toc, meta-aside-github]
+aside: [toc]
 ---
 
 ## 主题特性

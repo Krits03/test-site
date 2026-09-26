@@ -16,8 +16,10 @@ tags: [Twikoo, giscus, 评论系统, Nuxt, Vue]
 最初选 Twikoo 纯粹是主题自带，开箱即用、有管理面板、还能匿名评论。勉强还行，很久之前用过Giscus，印象深刻：
 
 ```ts [blog.config.ts]
-twikoo: {
-  envId: 'https://xxx.xxxxx.xxx/',
+export default {
+  twikoo: {
+    envId: 'https://xxx.xxxxx.xxx/',
+  },
 }
 ```
 

@@ -57,5 +57,9 @@ else {
 	v-else
 	icon="line-md:document-delete-twotone"
 	title="内容为空或页面不存在"
-/>
+>
+	<template #operation>
+		<ZButton primary to="/" icon="tabler:home" text="返回首页" />
+	</template>
+</ZError>
 </template>

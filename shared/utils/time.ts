@@ -105,7 +105,8 @@ export const dateTimeFormat = {
 
 export type dateTimeFormatOptions = keyof typeof dateTimeFormat | Intl.DateTimeFormatOptions
 
-export function toZdtLocaleString(date: string | Temporal.ZonedDateTime, format: dateTimeFormatOptions = 'full') {
+/** 默认按站点语言格式化，避免跟随运行环境 locale（Node 与访客浏览器默认多为 en-US） */
+export function toZdtLocaleString(date: string | Temporal.ZonedDateTime, format: dateTimeFormatOptions = 'full', locale = blogConfig.language) {
 	return (typeof date === 'string' ? toZonedTemporal(date) : date)
-		.toLocaleString(undefined, typeof format === 'string' ? dateTimeFormat[format] : format)
+		.toLocaleString(locale, typeof format === 'string' ? dateTimeFormat[format] : format)
 }

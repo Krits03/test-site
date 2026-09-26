@@ -66,7 +66,7 @@ const listFeed = computed(() => orderBy(listRaw.value, ['updated', 'date'], ['de
 
 		<div class="hero-actions">
 			<ZButton primary to="/atom.xml" icon="tabler:code" text="查看原始 XML" />
-			<ZButton :to="opmlUrl" icon="tabler:list-details" text="友链订阅" />
+			<ZButton external to="/subscriptions.opml" icon="tabler:list-details" text="友链订阅" />
 		</div>
 	</section>
 
