@@ -46,7 +46,3 @@ Happy 35th Birthday, Linux. Here’s to the power of open source and the next 35
 一个学生的副业项目起步，演变为历史上最伟大的协作技术运动。感谢每一位维护者、贡献者和倡导者，让这一切成为可能。
 
 Linux 35 岁生日快乐。致敬开源的力量，以及未来 35 年共同构建的岁月。
-
-## 结语
-
-三十五载，共赴开源未来。
