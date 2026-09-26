@@ -1,6 +1,6 @@
 ---
 title: Linux 35岁生日快乐！
-description: 祝贺这一伟大操作系统诞生35周年！
+description: 祝贺这一伟大操作系统诞辰35周年！
 date: 2026-08-25 08:00:00
 updated: 2026-08-25 08:35:00
 image: https://vercel-blob.api.kr033.top/api/download/post/linux-35th/20260926/1790385544589-Linux-35th.jpg
