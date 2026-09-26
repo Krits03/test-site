@@ -29,6 +29,7 @@ On August 25, 1991, a 21-year-old student sent a  message to a Usenet newsgroup.
 
 🎮 Redefining the future of handheld gaming
 
+
 What started as one student's side project became the greatest collaborative technology movement in history. Thank you to every maintainer, contributor, and advocate who made it possible.
 
 Happy 35th Birthday, Linux. Here’s to the power of open source and the next 35 years of building together.
@@ -41,9 +42,13 @@ Happy 35th Birthday, Linux. Here’s to the power of open source and the next 35
 35 年后，那个“爱好”已成为全球科技的支柱：
 
 🚀 为 NASA 的太空直升机提供动力
+
 ☁️ 运行全球云计算以及世界上 100% 的超级计算机
+
 📱 连接数十亿人
+
 🎮 重新定义掌上游戏的未来
+
 
 一个学生的副业项目起步，演变为历史上最伟大的协作技术运动。感谢每一位维护者、贡献者和倡导者，让这一切成为可能。
 
