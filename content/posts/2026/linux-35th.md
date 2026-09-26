@@ -1,5 +1,5 @@
 ---
-title:Linux 35岁生日快乐！
+title: Linux 35岁生日快乐！
 description: 祝贺这一伟大操作系统诞生35周年！
 date: 2026-08-25 08:00:00
 updated: 2026-08-25 08:35:00
@@ -12,7 +12,7 @@ references:
   - title: Linus Torvalds' original announcement on Usenet
     link: https://www.learnlinux.ie/content/linus-torvalds-original-announcement-usenet
   - title: Linux Foundation X Post
-    link:https://x.com/linuxfoundation/status/2092256520729702884
+    link: https://x.com/linuxfoundation/status/2092256520729702884
 ---
 
 "I'm doing a (free) operating system (just a hobby, won't be big and professional like gnu)..."
