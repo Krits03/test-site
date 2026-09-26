@@ -260,4 +260,11 @@ ${packageJson.homepage}
 		url: blogConfig.url,
 		defaultLocale: blogConfig.language,
 	},
+
+	sitemap: {
+		// 模块默认会注入 <?xml-stylesheet href="/__sitemap__/style.xsl"?>，用 XSLT 把 sitemap 渲染成表格。
+		// 浏览器正在移除 XSLT，打开 sitemap.xml 会弹出「functionality is being removed」弃用警告，
+		// 这里关掉样式表，直接输出纯 XML（对搜索引擎与阅读器行为无影响）。
+		xsl: false,
+	},
 })

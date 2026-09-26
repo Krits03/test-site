@@ -67,8 +67,12 @@ const blogConfig = {
 	feed: {
 		/** 订阅源最大文章数量 */
 		limit: 50,
-		/** 订阅源是否启用XSLT样式 */
-		enableStyle: true,
+		/**
+		 * 订阅源是否启用 XSLT 样式（/assets/atom.xsl）
+		 * 浏览器正在移除 XSLT，开启时打开 atom.xml 会弹出「functionality is being removed」弃用警告，
+		 * 且对订阅器与搜索引擎无影响，故关闭，直接输出纯 XML
+		 */
+		enableStyle: false,
 	},
 
 	/** 向 <head> 中添加脚本 */
