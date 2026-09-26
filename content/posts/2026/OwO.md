@@ -4,7 +4,7 @@ description: 这是一个MarkDown语法测试文档
 date: 2026-04-07 00:06:00
 updated: 2026-04-07 00:06:01
 image: https://vercel-blob.api.kr033.top/api/download/post/md-test/20260926/1790431002708-markdown.png
-aside: [toc, site]
+aside: [toc]
 ---
 # Markdown 语法测试文档
 
