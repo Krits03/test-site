@@ -76,8 +76,8 @@ link: /2026/blob-s3-imgbed
 ::card-list
 - **GitHub**：[Krits03](https://github.com/Krits03)
 - **邮箱**：`me@wkr-dev.top`{copy}
-- **站点状态**：[status.wkr-dev.top](https://status.wkr-dev.top/)
-- **订阅**：[Atom](/atom.xml)
+- **站点状态**：![站点状态](https://status.wkr-dev.top/)
+- **订阅**：[站点订阅](/feed)
 ::
 
 完...  233~
