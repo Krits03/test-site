@@ -22,8 +22,11 @@ On August 25, 1991, a 21-year-old student sent a  message to a Usenet newsgroup.
 35 years later, that "hobby" is the backbone of global technology:
 
 🚀 Powering helicopters in space with NASA
+
 ☁️ Running the global cloud and 100% of the world’s supercomputers
+
 📱 Connecting billions of people
+
 🎮 Redefining the future of handheld gaming
 
 What started as one student's side project became the greatest collaborative technology movement in history. Thank you to every maintainer, contributor, and advocate who made it possible.
