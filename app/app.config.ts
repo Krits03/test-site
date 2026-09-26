@@ -71,7 +71,7 @@ export default defineAppConfig({
 		iconNav: [
 			{ icon: 'tabler:home', text: '个人主页', url: blogConfig.author.homepage },
 			{ icon: 'tabler:brand-github', text: 'GitHub: Krits03', url: 'https://github.com/Krits03' },
-			{ icon: 'tabler:rss', text: 'Atom订阅', url: '/atom.xml' },
+			{ icon: 'tabler:rss', text: '订阅', url: '/feed' },
 			{ icon: 'tabler:router', text: '状态监测', url: 'https://status.wkr-dev.top/' },
 			//	{ icon: 'ri:subway-line', text: '开往 - 博客下一站', url: 'https://www.travellings.cn/go.html' },
 		] satisfies NavItem[],
@@ -80,7 +80,8 @@ export default defineAppConfig({
 			{
 				title: '探索',
 				items: [
-					{ icon: 'tabler:rss', text: 'Atom订阅', url: '/atom.xml' },
+					{ icon: 'tabler:rss', text: '订阅', url: '/feed' },
+					{ icon: 'tabler:sitemap', text: '站点地图', url: '/sitemap' },
 					{ icon: 'tabler:router', text: '状态监测', url: 'https://status.wkr-dev.top/' },
 					//	{ icon: 'ri:subway-line', text: '开往', url: 'https://www.travellings.cn/go.html' },
 				],
