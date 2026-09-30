@@ -78,15 +78,11 @@ const blogConfig = {
 	/** 向 <head> 中添加脚本 */
 	scripts: [
 		// Umami 官方云统计（cloud.umami.is）
-		// 脚本已本地化到 public/site-res/umami.js：官方 CDN 加载慢，本地加载不影响页面速度。
-		// 该脚本不依赖 script.src 推导上报地址，内置默认端点 https://gateway.umami.is/api/send，
-		// 因此本地化后上报不受影响（如需改网关，可加 data-host-url）。
 		// 更新脚本：curl -sL https://cloud.umami.is/script.js -o public/site-res/umami.js
 		{ 'src': '/site-res/umami.js', 'data-website-id': 'dce6932a-f94e-4645-8826-bb290a044d40', 'defer': true },
 		// 自己网站的 Cloudflare Insights 统计服务
 		{ 'src': 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "4ae7cffe5f8246079a0890511f066c21"}', 'defer': true },
 		// Cap 人机验证组件的内部依赖：Cap 默认从 cdn.jsdelivr.net 取 wasm 与 pako 解压库，该域名在国内不稳定。
-		// 这三个地址在 Cap 内部是可被全局变量覆盖的开关（window.CAP_CUSTOM_WASM_URL / CAP_CUSTOM_HASHWX_URL / CAP_PAKO_URL），
 		// 已本地化到 public/site-res/cap/ 同源加载（镜像站不可靠：npmmirror 只在部分边缘节点回 ACAO，zstatic 对 .wasm 直接 451）。
 		// wasm 版本需与组件内部写死的版本一致（当前 0.0.8），升级组件时同步更新：
 		// curl -sL -o public/site-res/cap/cap_wasm_bg.wasm https://cdn.jsdelivr.net/npm/@cap.js/wasm@0.0.8/browser/cap_wasm_bg.wasm
@@ -99,11 +95,7 @@ const blogConfig = {
 				+ 'window.CAP_PAKO_URL="/site-res/cap/pako_inflate.min.js";',
 		},
 		// Twikoo 人机验证组件（Cap widget）
-		// Twikoo 2.x 内部把它的地址写死成了 cdn.jsdmirror.com，该镜像不稳定；
-		// 这里提前定义好 <cap-widget>，Twikoo 检测到 customElements 中已存在就会跳过自带的加载。
 		// 已本地化到 public/site-res/cap/cap.min.js，整条 Cap 链路（组件 + wasm + 解压库）均为同源加载：
-		// 镜像站都不可靠——zstatic 会限流（429，且 429 响应不带 ACAO，crossorigin 脚本会直接 CORS 失败），
-		// 不带包内路径的地址还会 302 到 unpkg-www.us-west-1.workers.dev（国内 DNS 污染、不可达）。
 		// 且该脚本是 defer：一旦挂起会拖到超时才放行后续脚本与 hydration，评论区会长时间停在「评论加载中...」。
 		// 更新（版本需与下面 wasm 的版本一致）：
 		// curl -sL -o public/site-res/cap/cap.min.js https://cdn.jsdelivr.net/npm/@cap.js/widget@0.1.58/cap.min.js
