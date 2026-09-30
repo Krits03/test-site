@@ -11,6 +11,7 @@ aside: [toc]
 ---
 title: 博客主题开源地址
 link: https://github.com/L33Z22L11/blog-v3
+icon: https://github.com/favicon.ico
 class: gradient-card active
 ---
 ::
