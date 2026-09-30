@@ -239,6 +239,10 @@ ${packageJson.homepage}
 
 	linkChecker: {
 		// @keep-sorted
+		excludeLinks: [
+			// 不抓取检查订阅页链接（/feed）
+			'/feed',
+		],
 		skipInspections: [
 			'no-baseless',
 			'no-non-ascii-chars',
