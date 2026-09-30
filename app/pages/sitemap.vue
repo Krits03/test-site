@@ -138,7 +138,7 @@ const listGrouped = computed(() => Object.entries(groupBy(listSorted.value, getA
 		width: 3em;
 		height: 3em;
 		border-radius: 1em;
-		background: linear-gradient(135deg, var(--c-primary-soft), transparent);
+		background: linear-gradient(135deg, var(--c-primary-soft), var(--c-accent-soft) 65%, transparent);
 		font-size: 1.6em;
 		color: var(--c-primary);
 	}

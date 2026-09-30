@@ -3,7 +3,8 @@ const { slots } = provideLayoutSlots()
 </script>
 
 <template>
-<NuxtLoadingIndicator />
+<!-- 加载进度条沿用主题青色（两端实色，保证低速加载时也可见） -->
+<NuxtLoadingIndicator color="repeating-linear-gradient(to right, var(--c-primary) 0%, var(--c-primary-soft) 50%, var(--c-primary) 100%)" />
 <NuxtRouteAnnouncer :style="{ position: 'absolute' }" />
 <BlogSkipToContent />
 <BlogSidebar />

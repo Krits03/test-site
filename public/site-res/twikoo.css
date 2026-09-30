@@ -10,6 +10,9 @@
  * 2. 颜色全部取自站点自身的 CSS 变量（--c-* / --font-*），明暗模式自动跟随。
  * 3. 设计取向：与站点既有评论样式保持一致（圆角、留白、克制的强调色），
  *    不做大改布局，仅补齐输入框 / 按钮 / 分页 / 验证码 / 灯箱等新版组件的观感。
+ * 4. Twikoo 2.x 自带样式里还留有 Element 蓝（#409eff / #66b1ff / #3a8ee6 等）
+ *    与蓝调灰（#f2f6fc / #909399），本文件已逐条覆盖：主色统一为站点青，
+ *    仅 .tk-tag-blue 使用站点辅助蓝（--c-accent），保持「青为主、蓝为辅」。
  * ------------------------------------------------------------------
  */
 
@@ -22,12 +25,15 @@
 	--tk-text-3: var(--c-text-3, #999);
 
 	--tk-bg: var(--c-bg, #fff);
-	--tk-bg-2: var(--c-bg-2, #f2f2f5);
-	--tk-bg-3: var(--c-bg-3, #e9e9ee);
+	--tk-bg-2: var(--c-bg-2, #f1f4f3);
+	--tk-bg-3: var(--c-bg-3, #e9edec);
 
-	--tk-border: var(--c-border, #e5e5ea);
-	--tk-primary: var(--c-primary, #2a6df4);
-	--tk-primary-soft: var(--c-primary-soft, #2a6df426);
+	--tk-border: var(--c-border, #e6ebe9);
+	/* 主色青，辅助色蓝，与站点 --hue-theme / --hue-accent 一致 */
+	--tk-primary: var(--c-primary, #208870);
+	--tk-primary-soft: var(--c-primary-soft, #20887026);
+	--tk-accent: var(--c-accent, #3d64ff);
+	--tk-accent-soft: var(--c-accent-soft, #3d64ff26);
 
 	--tk-success: var(--c-success, #5a5);
 	--tk-warning: var(--c-warning, #d85);
@@ -86,6 +92,11 @@
 
 #twikoo .tk-input-group__append {
 	border-radius: 0 var(--tk-radius) var(--tk-radius) 0;
+}
+
+/* 后置按钮（如「发送」）悬停：Twikoo 内置为 Element 蓝 */
+#twikoo .tk-input-group__append .tk-button:hover {
+	color: var(--tk-primary);
 }
 
 #twikoo .tk-input__inner::placeholder {
@@ -197,6 +208,13 @@
 	color: var(--tk-primary);
 }
 
+/* 按下态：Twikoo 内置了 Element 蓝的 :active 规则，这里按非主按钮收回主题色 */
+#twikoo .tk-button:not(.tk-button--primary):not(.tk-button--text):not(.is-disabled):active {
+	border-color: var(--tk-primary);
+	background-color: var(--tk-primary-soft);
+	color: var(--tk-primary);
+}
+
 /* 主按钮：文字色跟随 --c-bg，明暗模式下都能保证对比度 */
 #twikoo .tk-button--primary {
 	border-color: var(--tk-primary);
@@ -262,6 +280,27 @@
 	color: var(--tk-text-3);
 }
 
+/* 评论区图标（评论数等）：Twikoo 内置为 Element 蓝 */
+#twikoo .tk-icon.__comments {
+	color: var(--tk-primary);
+}
+
+#twikoo .tk-icon.__comments.__active {
+	background: var(--tk-primary);
+	box-shadow: 0 0 0 0.2rem var(--tk-primary-soft);
+	color: var(--c-bg, #fff);
+}
+
+/* 昵称链接悬停 */
+#twikoo .tk-nick-link:hover {
+	color: var(--tk-primary);
+}
+
+/* 操作区文字按钮（登录 / 管理面板入口等） */
+#twikoo .tk-actions button {
+	color: var(--tk-primary);
+}
+
 /* 评论正文：淡背景块，与站点 blockquote 的处理保持一致。
    负 margin 用于抵消 padding，避免改变既有布局与链接可绘制区域。 */
 #twikoo .tk-comment .tk-main .tk-content {
@@ -296,6 +335,12 @@
 }
 
 #twikoo .tk-action-count {
+	color: var(--tk-text-3);
+}
+
+/* 底部元信息：Twikoo 内置硬编码 #999，统一到站点文字色阶 */
+#twikoo .tk-extras,
+#twikoo .tk-footer {
 	color: var(--tk-text-3);
 }
 
@@ -438,6 +483,8 @@
 /* 标签（博主 / 置顶 / 待审核等） */
 #twikoo .tk-tag {
 	border-radius: var(--tk-radius-sm);
+	background-color: var(--tk-bg-3);
+	color: var(--tk-text-2);
 }
 
 #twikoo .tk-tag-green {
@@ -446,10 +493,11 @@
 	color: var(--tk-primary);
 }
 
+/* 唯一的辅助蓝：标签的 blue 变体（站点「蓝色为辅助」的落地位置） */
 #twikoo .tk-tag-blue {
 	border-color: transparent;
-	background-color: var(--tk-primary-soft);
-	color: var(--tk-primary);
+	background-color: var(--tk-accent-soft);
+	color: var(--tk-accent);
 }
 
 #twikoo .tk-tag-yellow {
@@ -502,6 +550,11 @@
 	background-color: color-mix(in srgb, var(--tk-bg) 60%, transparent);
 	backdrop-filter: blur(2px);
 	border-radius: var(--tk-radius-sm);
+}
+
+/* 加载转圈：Twikoo 内置描边为 Element 蓝 */
+#twikoo .tk-loading-spinner .path {
+	stroke: var(--tk-primary);
 }
 
 @keyframes tk-fade-in {
