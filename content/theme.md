@@ -7,6 +7,16 @@ hideInfo: true
 aside: [toc]
 ---
 
+::link-card
+---
+title: 博客主题开源地址
+link: https://github.com/L33Z22L11/blog-v3
+class: gradient-card active
+---
+#icon
+**开源地址**
+::
+
 ## 主题特性
 
 ::card-list
