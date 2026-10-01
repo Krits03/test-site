@@ -69,10 +69,8 @@ const blogConfig = {
 		limit: 50,
 		/**
 		 * 订阅源是否启用 XSLT 样式（/assets/atom.xsl）
-		 * 浏览器正在移除 XSLT，开启时打开 atom.xml 会弹出「functionality is being removed」弃用警告，
-		 * 且对订阅器与搜索引擎无影响，故关闭，直接输出纯 XML
 		 */
-		enableStyle: false,
+		enableStyle: true,
 	},
 
 	/** 向 <head> 中添加脚本 */
@@ -102,7 +100,7 @@ const blogConfig = {
 		{ src: '/site-res/cap/cap.min.js', defer: true },
 		// Twikoo 评论系统
 		// 官方 2.x 的语法目标为 ES2022，最低支持 Chrome/Edge 94、Firefox 93、Safari 15.4（更低的浏览器不受支持）
-		{ src: 'https://s4.zstatic.net/npm/twikoo@2.0.9/dist/twikoo.min.js', defer: true },
+		{ src: 'https://s4.zstatic.net/npm/twikoo@2.0.12/dist/twikoo.min.js', defer: true },
 	],
 
 	/** 文章统计配置 */
