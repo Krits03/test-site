@@ -1,8 +1,18 @@
 /*!
  * Twikoo 美化样式 · v2
  * ------------------------------------------------------------------
- * 适配 Twikoo 2.x（本站为 twikoo@2.0.9）
+ * 适配 Twikoo 2.x（本站为 twikoo@2.0.12，自 2.0.9 升级）
  * 站点：https://site.wkr-dev.top （Kr.Zhan · Nuxt）
+ *
+ * 2.0.9 → 2.0.12 样式核对（2026-10-01）：
+ *   两版的 dist/twikoo.css 字节完全一致（sha256 92879dc7…cfee56，23828 B），
+ *   twikoo.min.js 里的 tk-* 类名集合也完全相同 —— 这三个版本没有改动样式，
+ *   因此本文件不需要随版本号变化。改动都落在服务端或非样式逻辑上：
+ *   · 2.0.12：POST_SUBMIT 改由 waitUntil 在后台执行（提交评论不再阻塞约 5 秒）；
+ *             owo 表情名正则放宽，含非 ASCII 的表情名（如 Bilibili 的 tv_呆）恢复渲染。
+ *   · 2.0.11：pushoo 的 CommonJS 入口指向错误修复（服务端推送依赖）。
+ *   · 2.0.10：CloudBase 冷启动、Cloudflare 接 MongoDB / SMTP 等后端适配改动。
+ *   已逐条核对：本文件引用的 tk-* 类名在 2.0.12 产物中全部存在，无失效选择器。
  *
  * 说明：
  * 1. Twikoo 2.x 已移除 Element UI，旧版依赖 .el-input__inner / .el-button--primary
