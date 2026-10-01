@@ -117,9 +117,8 @@ const blogConfig = {
 
 	/** 自己部署的 Twikoo 服务 */
 	twikoo: {
-		envId: 'https://twikoo.site.wkr-dev.top/.netlify/functions/twikoo/',
-		preload: 'https://twikoo.site.wkr-dev.top/.netlify/functions/twikoo/',
-		/** 评论内代码高亮的 Prism 资源地址：Twikoo 默认写死为 cdn.jsdelivr.net（国内不稳定），改用 zstatic 镜像 */
+		envId: 'https://twikoo-next.kr033.top/.netlify/functions/twikoo/',
+		preload: 'https://twikoo-next.kr033.top/.netlify/functions/twikoo/',
 		prismCdn: 'https://s4.zstatic.net/npm/prismjs@1.28.0',
 	},
 }
