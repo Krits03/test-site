@@ -77,7 +77,7 @@ export interface MusicConfig {
 
 const musicConfig: MusicConfig = {
 	enable: true,
-	defaultVolume: 0.7,
+	defaultVolume: 0.4,
 	defaultMode: 'list',
 	showVolume: true,
 
