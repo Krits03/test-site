@@ -68,9 +68,10 @@ const musicConfig: MusicConfig = {
 	 *   playlistId: '12834717281',
 	 */
 	meting: {
-		api: '',
+		api: 'https://meting.api.zkz098.cn/',
 		server: 'netease',
-		playlistId: '',
+		// 歌单「栈点 Krits03」：https://music.163.com/m/playlist?id=18440555172
+		playlistId: '18440555172',
 	},
 
 	/**
