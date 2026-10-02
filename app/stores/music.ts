@@ -25,6 +25,19 @@ interface MetingItem {
 	lrc?: string
 }
 
+/** NCM 歌单详情返回的曲目 */
+interface NcmTrack {
+	id: number
+	name?: string
+	ar?: { name: string }[]
+	al?: { picUrl?: string }
+}
+/** NCM /song/url 返回的直链行 */
+interface NcmUrlRow {
+	id: number
+	url?: string | null
+}
+
 const PLAY_MODES: MusicPlayMode[] = ['list', 'one', 'random']
 
 function clamp01(value: number) {
@@ -60,11 +73,19 @@ export const useMusicStore = defineStore('music', () => {
 
 	const current = computed(() => list.value[index.value])
 
-	/** 读取歌单：本地歌单优先，其次 Meting，都没有则返回空 */
+	/** 读取歌单：本地歌单优先，其次按 source 选择 Meting / NCM */
 	async function resolvePlaylist(): Promise<MusicItem[]> {
 		if (musicConfig.playlist.length)
 			return [...musicConfig.playlist]
 
+		if (musicConfig.source === 'ncm')
+			return resolveNcm()
+
+		return resolveMeting()
+	}
+
+	/** 通过 Meting 接口解析歌单（支持多平台，返回字段兼容 name/artist 与 title/author） */
+	async function resolveMeting(): Promise<MusicItem[]> {
 		const { api, server, playlistId } = musicConfig.meting
 		if (!api || !playlistId)
 			return []
@@ -107,6 +128,72 @@ export const useMusicStore = defineStore('music', () => {
 				url: audio,
 				cover: toAbs(item.pic),
 				lrc: toAbs(item.lrc),
+			}]
+		})
+	}
+
+	/** 通过 NeteaseCloudMusicApi（NCM）接口解析歌单，官方 API 复刻，可自托管 */
+	async function resolveNcm(): Promise<MusicItem[]> {
+		const { api, playlistId, randomCNIP = true } = musicConfig.ncm
+		if (!api || !playlistId)
+			return []
+
+		const base = api.replace(/\/+$/, '')
+
+		// NCM 直链多为 http，部署在 https 站点时需升级为 https，避免混合内容被拦截
+		const toHttps = (p?: string): string | undefined => {
+			if (!p)
+				return undefined
+			return p.startsWith('http:') ? 'https:' + p.slice(5) : p
+		}
+
+		// 1) 歌单详情：曲目列表（name / 歌手 ar / 专辑封面 al.picUrl）
+		const detailRes = await fetch(`${base}/playlist/detail?id=${encodeURIComponent(playlistId)}`)
+		if (!detailRes.ok)
+			throw new Error(`NCM 歌单请求失败：HTTP ${detailRes.status}`)
+		const detail = await detailRes.json() as { playlist?: { tracks?: NcmTrack[] } }
+		const tracks = detail.playlist?.tracks ?? []
+		if (!tracks.length)
+			return []
+
+		// 2) 批量音源直链：逗号分隔 id，单个请求拿全歌单（randomCNIP 绕过直链风控）
+		const urlParams = new URLSearchParams({ id: tracks.map(t => t.id).join(',') })
+		if (randomCNIP)
+			urlParams.set('randomCNIP', 'true')
+		const urlRes = await fetch(`${base}/song/url?${urlParams.toString()}`)
+		if (!urlRes.ok)
+			throw new Error(`NCM 音源请求失败：HTTP ${urlRes.status}`)
+		const urlJson = await urlRes.json() as { data?: (NcmUrlRow | null)[] }
+		const urlMap = new Map<number, string>()
+		for (const row of urlJson.data ?? []) {
+			if (row?.url)
+				urlMap.set(row.id, row.url)
+		}
+
+		// 3) 并行拉歌词（失败不致命，仅该行缺歌词）
+		const lyrics = await Promise.all(tracks.map(t =>
+			fetch(`${base}/lyric?id=${t.id}`)
+				.then(r => (r.ok ? r.json() : null) as Promise<{ lrc?: { lyric?: string } } | null>)
+				.then(j => j?.lrc?.lyric ?? '')
+				.catch(() => ''),
+		))
+
+		return tracks.flatMap((t, i) => {
+			const url = urlMap.get(t.id)
+			if (!url)
+				return []
+
+			const artist = (t.ar ?? [])
+				.map(a => a.name)
+				.filter(Boolean)
+				.join('/')
+
+			return [{
+				name: t.name ?? '',
+				artist,
+				url: toHttps(url) ?? '',
+				cover: toHttps(t.al?.picUrl),
+				lrc: lyrics[i] || undefined,
 			}]
 		})
 	}

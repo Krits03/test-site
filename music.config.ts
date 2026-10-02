@@ -36,6 +36,19 @@ export interface MusicMetingSource {
 	playlistId: string
 }
 
+/** NCM（NeteaseCloudMusicApi）在线数据源，用于按歌单 ID 解析网易云曲目 */
+export interface MusicNcmSource {
+	/** 实例根地址，如 'https://music163.api.kr033.top' */
+	api: string
+	/** 歌单 ID，取自歌单链接的 `id` 查询参数 */
+	playlistId: string
+	/**
+	 * 是否启用 randomCNIP（随机中国出口 IP），绕过网易云对数据中心 IP 的直链风控。
+	 * 默认 true；官方 API 复刻版支持该参数，无需改动即可保持开启。
+	 */
+	randomCNIP?: boolean
+}
+
 export interface MusicConfig {
 	/** 是否在侧边栏展示播放器 */
 	enable: boolean
@@ -45,9 +58,18 @@ export interface MusicConfig {
 	defaultMode: MusicPlayMode
 	/** 是否显示音量控制条 */
 	showVolume: boolean
-	/** 在线歌单：api 与 playlistId 同时填写后才生效 */
+	/**
+	 * 在线音源选择：
+	 * - 'meting' 走 Meting 接口（按平台聚合，支持网易云 / QQ / 酷狗等）
+	 * - 'ncm'    走 NeteaseCloudMusicApi 接口（官方 API 复刻，可自托管）
+	 * 本地 playlist 始终优先于以上二者。
+	 */
+	source: 'meting' | 'ncm'
+	/** 在线歌单（Meting）：source 设为 'meting' 时生效 */
 	meting: MusicMetingSource
-	/** 本地歌单：非空时优先于 meting 配置 */
+	/** 在线音源（NCM）：source 设为 'ncm' 时生效 */
+	ncm: MusicNcmSource
+	/** 本地歌单：非空时优先于以上所有在线音源 */
 	playlist: MusicItem[]
 	/** 音源加载失败时的提示文案 */
 	errorTip: string
@@ -58,6 +80,9 @@ const musicConfig: MusicConfig = {
 	defaultVolume: 0.8,
 	defaultMode: 'list',
 	showVolume: true,
+
+	// 在线音源开关：'meting' 或 'ncm'；本地 playlist 始终优先
+	source: 'ncm',
 
 	/**
 	 * 在线歌单（Meting）
@@ -80,8 +105,24 @@ const musicConfig: MusicConfig = {
 	},
 
 	/**
+	 * 在线音源（NCM / NeteaseCloudMusicApi 增强版）
+	 * source 设为 'ncm' 时启用。基于网易云官方 API 复刻，可自托管，便于后续自行维护。
+	 * 接口链路：
+	 *   /playlist/detail?id=...            → 歌单曲目列表（name / ar / al.picUrl）
+	 *   /song/url?id=...&randomCNIP=true   → 批量播放直链（绕过直链风控，320k mp3）
+	 *   /lyric?id=...                      → 歌词文本（并行拉取，失败不致命）
+	 * 实测：CORS: *，randomCNIP 可用，返回真实 mp3 直链。
+	 */
+	ncm: {
+		api: 'https://music163.api.kr033.top',
+		playlistId: '18440555172',
+		// 随机中国出口 IP，绕过网易云对数据中心 IP 的直链风控；无需改动可保持开启
+		randomCNIP: true,
+	},
+
+	/**
 	 * 本地歌单
-	 * 填入后优先于 Meting，适合把音频放进 public/ 自托管，避免依赖第三方服务。
+	 * 填入后优先于 Meting 与 NCM，适合把音频放进 public/ 自托管，避免依赖第三方服务。
 	 * 例：
 	 *   {
 	 *     name: '示例歌曲',
