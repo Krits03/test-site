@@ -28,6 +28,7 @@ const { data: previewCount } = useAsyncData(
 
 <template>
 <template #aside>
+	<WidgetMusicPlayer />
 	<WidgetBlogStats />
 	<WidgetBlogTech />
 	<WidgetCommGroup />
