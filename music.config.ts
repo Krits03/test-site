@@ -68,9 +68,11 @@ const musicConfig: MusicConfig = {
 	 *   playlistId: '12834717281',
 	 */
 	meting: {
-		// 注意：原示例 api（meting.api.zkz098.cn）已被 Cloudflare 人机验证拦截，
-		// 浏览器 fetch 取不到数据导致播放器报错，故改用下方可用端点（带 CORS、302 跳真实音频）。
-		api: 'https://api.injahow.cn/meting/',
+		// Meting API 实例（kr033.top 自托管，基于 zkz098/meting-api-rs 同源实现）
+		// legacy 接口：GET /api?server=netease&type=playlist&id=...
+		// 实测：无出口限制，裸 type=url 默认 302 跳真实网易云 mp3，可直接播放；
+		//       返回字段为 title/author（非 name/artist），已在 app/stores/music.ts 兼容。
+		api: 'https://meting.api.kr033.top/api',
 		server: 'netease',
 		// 歌单「栈点 Krits03」：https://music.163.com/m/playlist?id=18440555172
 		// 注：网易云下架/灰掉的曲目不会被返回，当前可用 1 首

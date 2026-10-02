@@ -74,6 +74,15 @@ export const useMusicStore = defineStore('music', () => {
 		url.searchParams.set('type', 'playlist')
 		url.searchParams.set('id', playlistId)
 
+		// meting-api-rs 的 legacy 接口返回的 url/pic/lrc 为相对路径（/api?...），
+		// 跨域部署时需基于 api 源拼成绝对地址，否则会被解析到博客自身源而 404。
+		const apiOrigin = url.origin
+		const toAbs = (p?: string | null): string | undefined => {
+			if (!p)
+				return undefined
+			return p.startsWith('/') ? apiOrigin + p : p
+		}
+
 		const res = await fetch(url)
 		if (!res.ok)
 			throw new Error(`歌单请求失败：HTTP ${res.status}`)
@@ -83,12 +92,21 @@ export const useMusicStore = defineStore('music', () => {
 			if (!item.url)
 				return []
 
+			// type=url 默认返回 JSON，带 redirect=1 才 302 跳转到真实音频地址
+			let audio = toAbs(item.url) ?? ''
+			if (/[?&]type=url\b/.test(audio) && !/[?&]redirect=/.test(audio))
+				audio += (audio.includes('?') ? '&' : '?') + 'redirect=1'
+
+			// 兼容两套字段命名：经典 meting-api 用 title/author，meting-api-rs 用 name/artist
+			const name = (item as Record<string, any>).name ?? (item as Record<string, any>).title ?? ''
+			const artist = (item as Record<string, any>).artist ?? (item as Record<string, any>).author ?? ''
+
 			return [{
-				name: item.name,
-				artist: item.artist,
-				url: item.url,
-				cover: item.pic,
-				lrc: item.lrc,
+				name,
+				artist,
+				url: audio,
+				cover: toAbs(item.pic),
+				lrc: toAbs(item.lrc),
 			}]
 		})
 	}
