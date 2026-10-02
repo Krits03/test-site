@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import musicConfig from '~~/music.config'
+
 const route = useRoute()
 const contentPath = useContentPath().value
 
@@ -11,7 +13,12 @@ const excerpt = computed(() => post.value?.description || '')
 const asideWidgetNames = computed<WidgetName[]>(() => {
 	if (!post.value)
 		return ['blog-log']
-	return (post.value.meta?.aside as WidgetName[] | undefined) ?? ['toc']
+
+	// 文章 frontmatter 显式指定的 aside 优先；播放器随后统一追加，便于边读边听
+	const aside = (post.value.meta?.aside as WidgetName[] | undefined) ?? ['toc']
+	if (!musicConfig.enable || aside.includes('music-player'))
+		return aside
+	return [...aside, 'music-player']
 })
 const { widgets } = useWidgets(asideWidgetNames)
 

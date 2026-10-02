@@ -9,6 +9,7 @@ import {
 	LazyWidgetCommGroup,
 	LazyWidgetEmpty,
 	LazyWidgetMe,
+	LazyWidgetMusicPlayer,
 	LazyWidgetSite,
 	LazyWidgetToc,
 } from '#components'
@@ -22,6 +23,7 @@ const rawWidgets = {
 	LazyWidgetCommGroup,
 	LazyWidgetEmpty,
 	LazyWidgetMe,
+	LazyWidgetMusicPlayer,
 	LazyWidgetSite,
 	LazyWidgetToc,
 }
