@@ -129,30 +129,7 @@ const showAllDate = isTimeDiffSignificant(props.date, props.updated)
 	}
 }
 
-/* 现代浏览器按卡片实际宽度响应（@container 需 Chrome 105+） */
 @container (max-width: 528px) {
-	.article-cover {
-		position: revert;
-		width: 100%;
-		height: auto;
-		max-width: none;
-		max-height: 256px;
-		aspect-ratio: 2.4;
-		margin-bottom: -10%;
-		mask-image: linear-gradient(#FFF 50%, transparent);
-
-		& + article {
-			width: auto;
-
-			> .article-title {
-				text-shadow: 0 0 0.2em var(--ld-bg-card), 0 0 0.5em var(--ld-bg-card), 0 0 1em var(--ld-bg-card);
-			}
-		}
-	}
-}
-
-/* Chrome 100 不支持 @container：窄屏时卡片宽度≈视口，用媒体查询兜底 */
-@media (max-width: 528px) {
 	.article-cover {
 		position: revert;
 		width: 100%;
