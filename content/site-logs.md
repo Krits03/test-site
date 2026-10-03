@@ -1,25 +1,13 @@
 ---
 title: 站点日志
 date: 2026-08-28 20:11:00
-updated: 2026-10-03 12:50:00
+updated: 2026-09-30 19:53:00
 categories: [技术]
 aside: [toc]
 tags: [Site, Logs, Vercel]
 ---
 
 记录一下本站的折腾过程，想到什么写什么，按时间倒序排 awa.
-
-## 2026-10-03
-
-- 兼容性修复：移除布局中依赖 `:has()` 的选择器，改用 `html.has-aside` 类驱动侧栏网格；为卡片的容器查询 `@container` 增加等价 `@media` 回退，确保 Chrome 100+ 正常渲染。
-- 侧栏调整：首页关闭 CommGroup 组件显示；文章页音乐卡片前置到目录（TOC）之上。
-
-## 2026-10-02
-
-- 音乐播放器接入网易云歌单「栈点 Krits03」：支持 meting / NCM 双音源切换（`music.config.ts` 的 `source` 开关），当前默认 NCM（music163.api.kr033.top，NeteaseCloudMusicApi 复刻、可自托管）；NCM 直链统一升级为 https 规避混合内容拦截。
-- 首页音乐卡片移至技术信息卡片下方。
-- 音乐卡片默认音量调整至 30%。
-- README 精简为简写版项目说明。
 
 ## 2026-09-30
 
