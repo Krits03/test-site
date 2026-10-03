@@ -3,7 +3,8 @@ title: Git用法简记
 description: 记录Git常用命令与写法规范，备忘记录emmm....   供参考
 date: 2026-10-04 00:25:00
 updated: 2026-10-04 00:25:00
-categories: [技术，开发]
+image: https://r2-data.site.kr033.top/site/post/git-note/Git-Logo-2Color.png
+categories: [技术, 开发]
 aside: [toc]
 tags: [Git, 规范, 笔记]
 ---

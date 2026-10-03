@@ -3,7 +3,7 @@ title: 把 Vercel Blob 改造成 S3 兼容图床
 description: 把 Vercel Blob 包装成 S3 兼容 + 简单 HTTP 双接口的对象存储网关，接入 Twikoo 评论图床
 date: 2026-08-30 20:11:00
 updated: 2026-09-24 22:40:00
-image: https://vercel-blob.api.kr033.top/api/download/site/post/vercel-blob-to-s3/20260830/1788127625440-1000004294.jpg
+image: https://r2-data.site.kr033.top/site/post/vercel-blob-to-s3/banner.jpg
 categories: [技术]
 aside: [toc]
 tags: [Twikoo, Vercel, S3, 图床, Blob]
