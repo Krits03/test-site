@@ -210,16 +210,9 @@ img {
 	}
 
 	> .space:is(:first-child, :last-child)::before,
+	> :not(.space) + .space:has(+ .space)::before,
 	> .space + .space::before {
 		content: "·";
-	}
-
-	/* Chrome 100 及以下不支持 :has()：若把 :has() 写进上面的选择器列表，
-	   整条规则会失效导致分隔符丢失，故单独用 @supports 隔离。 */
-	@supports selector(:has(*)) {
-		> :not(.space) + .space:has(+ .space)::before {
-			content: "·";
-		}
 	}
 
 	> .tab::before {

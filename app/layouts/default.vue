@@ -56,28 +56,6 @@ const { slots } = provideLayoutSlots()
 	}
 }
 
-/* Chrome 100 及以下不支持 :has()：上面的 :has() 规则（含其 media 断点）会整条失效，
-   这里用 @supports 隔离出 auto 轨道方案，让 aside 有无自动伸缩，避免窄屏布局错乱。
-   支持 :has() 的浏览器不进入此分支，行为与原版完全一致。 */
-@supports not selector(:has(*)) {
-	#blog-root {
-		grid-template-columns: var(--sidebar-width) minmax(0, 1fr) auto;
-
-		@media (max-width: 1080px) {
-			grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-		}
-
-		@media (max-width: 768px) {
-			grid-template-columns: minmax(0, 1fr);
-		}
-	}
-
-	/* 宽屏时 aside 自带宽度撑起 auto 轨道；无 aside 时该轨道坍缩为 0，自然回到两列。 */
-	@media not (max-width: 1080px) {
-		#blog-aside { width: var(--aside-width); }
-	}
-}
-
 #blog-sidebar, #blog-aside {
 	position: sticky;
 	top: 0;
