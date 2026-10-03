@@ -1,5 +1,14 @@
 <script setup lang="ts">
 const { slots } = provideLayoutSlots()
+
+// 用「是否含 aside 插槽」驱动 <html> 的 has-aside class，
+// 替代 CSS :has()（Chrome 105+ 才支持），以兼容 Chrome 100+。
+const hasAside = computed(() => !!slots.value?.aside)
+useHead({
+	htmlAttrs: {
+		class: computed(() => ({ 'has-aside': hasAside.value })),
+	},
+})
 </script>
 
 <template>
@@ -29,7 +38,9 @@ const { slots } = provideLayoutSlots()
 	--sidebar-width: var(--aside-width);
 
 	display: grid;
-	grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--aside-width);
+	/* 默认两列：无 aside 的页面（404、标签页等）不留空右栏。
+	   :has() 需 Chrome 105+，改用 html.has-aside class 兼容 Chrome 100+。 */
+	grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
 	align-items: start;
 	column-gap: 1rem;
 	width: 100%;
@@ -37,22 +48,18 @@ const { slots } = provideLayoutSlots()
 	max-width: calc(var(--aside-width) + 1rem + 1080px);
 	margin-inline: auto;
 
-	&:not(:has(> .blog-aside-track > #blog-aside:not(.is-empty))) {
-		grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+	/* 有 aside 时恢复三列 */
+	html.has-aside & {
+		grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--aside-width);
 	}
 
 	@media (max-width: 1080px) {
 		--sidebar-width: clamp(240px, 25vw, var(--aside-width));
-
-		&, &:not(:has(> .blog-aside-track > #blog-aside:not(.is-empty))) {
-			grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-		}
+		grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
 	}
 
 	@media (max-width: 768px) {
-		&, &:not(:has(> .blog-aside-track > #blog-aside:not(.is-empty))) {
-			grid-template-columns: minmax(0, 1fr);
-		}
+		grid-template-columns: minmax(0, 1fr);
 	}
 }
 
@@ -85,7 +92,7 @@ const { slots } = provideLayoutSlots()
 	display: contents;
 
 	@media not (max-width: 1080px) {
-		&:has(> #blog-aside:not(.is-empty)) {
+		html.has-aside & {
 			display: block;
 			grid-area: 1 / 3;
 			align-self: stretch;

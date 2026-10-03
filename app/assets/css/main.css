@@ -210,7 +210,6 @@ img {
 	}
 
 	> .space:is(:first-child, :last-child)::before,
-	> :not(.space) + .space:has(+ .space)::before,
 	> .space + .space::before {
 		content: "·";
 	}

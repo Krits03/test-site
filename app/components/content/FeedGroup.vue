@@ -113,7 +113,25 @@ if (import.meta.dev) {
 	}
 }
 
+/* 现代浏览器按容器实际宽度响应（@container 需 Chrome 105+） */
 @container (max-width: 528px) {
+	.feed-list {
+		grid-template-columns: repeat(auto-fill, minmax(5em, 1fr));
+		font-size: 0.9em;
+
+		:deep(.feed-card) {
+			flex-direction: column;
+			text-align: center;
+
+			.avatar.avatar {
+				margin: 0 0 0.2em;
+			}
+		}
+	}
+}
+
+/* Chrome 100 不支持 @container：窄屏时容器宽度≈视口，用媒体查询兜底 */
+@media (max-width: 528px) {
 	.feed-list {
 		grid-template-columns: repeat(auto-fill, minmax(5em, 1fr));
 		font-size: 0.9em;
