@@ -42,23 +42,21 @@ git config --global core.editor "vim"
 git config --list --show-origin
 ```
 
-### 1.2 配置 SSH（推荐）
+### 1.2 配置 SSH
 
-如果使用 GitHub/GitLab，推荐用 SSH：
+配置邮箱地址：
 
 ```bash
 ssh-keygen -t ed25519 -C "你的邮箱@example.com"
 ```
 
-一路回车即可。然后查看公钥：
+查看公钥：
 
 ```bash
 cat ~/.ssh/id_ed25519.pub
 ```
 
-复制输出内容，粘贴到 GitHub/GitLab 的 SSH Keys 设置中。
-
-测试：
+命令测试连通性：
 
 ```bash
 ssh -T git@github.com
