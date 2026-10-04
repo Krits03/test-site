@@ -75,9 +75,10 @@ export interface MusicConfig {
 	errorTip: string
 }
 
+// 默认音量设置
 const musicConfig: MusicConfig = {
 	enable: true,
-	defaultVolume: 0.3,
+	defaultVolume: 0.6,
 	defaultMode: 'list',
 	showVolume: true,
 
