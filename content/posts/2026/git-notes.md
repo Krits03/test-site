@@ -9,6 +9,10 @@ aside: [toc]
 tags: [Git, 规范, 笔记]
 ---
 
+::alert
+文章部分内容存在AI修改
+::
+
 ## 一、初始配置
 
 ### 1.1 配置用户名和邮箱
@@ -44,10 +48,10 @@ git config --list --show-origin
 
 ### 1.2 配置 SSH
 
-配置邮箱地址：
+配置邮箱地址(账号邮箱)：
 
 ```bash
-ssh-keygen -t ed25519 -C "你的邮箱@example.com"
+ssh-keygen -t ed25519 -C "邮箱@example.com"
 ```
 
 查看公钥：
