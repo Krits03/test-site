@@ -31,7 +31,7 @@ export default [
 	// #region 网上邻居 since 2026
 	{
 		name: '网上邻居',
-		desc: '哔哔~~通讯中，欢迎常来串门。',
+		desc: '哔哔~~电波通讯中，欢迎常来串门。',
 		// @keep-sorted { "keys": ["date"] }
 		entries: [
 			{
@@ -66,7 +66,7 @@ export default [
             	feed: 'https://daybook.page/rss.xml',
             	icon: 'https://daybook.page/favicon.svg',
             	avatar: 'https://daybook.page/attachments/picture/shelby.jpg',
-            	archs: ['Go'],
+            	archs: ['Golang'],
             	date: '2026-10-03',
              	comment: 'Go 构建的 Obsidian 知识库，技术实践与生活随笔',
             },
