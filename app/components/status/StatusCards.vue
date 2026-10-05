@@ -2,11 +2,9 @@
 import type { SiteStatusType, SiteStatus } from "~/types/status"
 import { getSiteData } from "~/utils/status/helper"
 import { formatTime, formatDuration, formatInterval } from "~/utils/status/time"
-import { jumpLink } from "~/utils/status/helper"
 
 const statusStore = useStatusStore()
 
-// 站点状态映射
 const statusMap: Record<number, { text: string; type: SiteStatus }> = {
 	0: { text: "已暂停", type: "unknown" },
 	1: { text: "未检测", type: "unknown" },
@@ -15,7 +13,6 @@ const statusMap: Record<number, { text: string; type: SiteStatus }> = {
 	9: { text: "宕机", type: "error" },
 }
 
-// 检测类型映射
 const typeMap: Record<number, { tag: string; text: string }> = {
 	1: { tag: "HTTP", text: "发送 HTTP/HTTPS 请求检测目标可用性" },
 	2: { tag: "KEYWORD", text: "检查页面内容是否包含指定关键词" },
@@ -24,12 +21,10 @@ const typeMap: Record<number, { tag: string; text: string }> = {
 	5: { tag: "HEARTBEAT", text: "被监控服务主动发送心跳信号" },
 }
 
-// 全部站点数据
 const siteData = computed<SiteStatusType[] | undefined>(
 	() => statusStore.siteData?.data,
 )
 
-// 根据可用性百分比获取当天状态
 function getDayStatus(percent: number): SiteStatus {
 	if (percent >= 100) return "normal"
 	if (percent >= 50) return "warn"
@@ -37,7 +32,17 @@ function getDayStatus(percent: number): SiteStatus {
 	return "unknown"
 }
 
-// 手动刷新
+function statusColor(type: SiteStatus): string {
+	const map: Record<SiteStatus, string> = {
+		normal: "var(--c-success)",
+		error: "var(--c-error)",
+		warn: "var(--c-warning)",
+		unknown: "var(--c-text-3)",
+		loading: "var(--c-text-2)",
+	}
+	return map[type]
+}
+
 async function refresh() {
 	statusStore.$patch({ siteStatus: "loading", siteData: undefined })
 	await getSiteData()
@@ -49,11 +54,11 @@ onMounted(getSiteData)
 <template>
 	<div class="status-cards">
 		<!-- 加载/错误状态 -->
-		<div v-if="!siteData?.length" class="status-card loading-card">
+		<div v-if="!siteData?.length" class="status-card card loading-card">
 			<div v-if="statusStore.siteStatus !== 'unknown'" class="loading-spinner" />
 			<div v-else class="error-state">
 				<p class="error-title">数据获取失败</p>
-				<p class="error-desc">请检查 UptimeRobot API Key 配置或网络连接</p>
+				<p class="error-desc">请检查 STATUS_API_KEY 配置或网络连接</p>
 				<button class="retry-btn" @click="refresh">重新加载</button>
 			</div>
 		</div>
@@ -62,8 +67,8 @@ onMounted(getSiteData)
 		<div
 			v-for="(site, index) in siteData"
 			:key="site.id"
-			class="status-card"
-			:style="{ animationDelay: `${index * 0.08}s` }"
+			class="status-card card upraise"
+			:style="{ animationDelay: `${index * 0.06}s` }"
 		>
 			<!-- 顶部信息 -->
 			<div class="card-meta">
@@ -80,12 +85,18 @@ onMounted(getSiteData)
 						rel="noopener noreferrer"
 						title="访问站点"
 					>
-						<Icon name="tabler:external-link" />
+						<Icon name="tabler:external-link" :size="14" />
 					</a>
 				</div>
-				<div class="site-status-badge" :class="statusMap[site.status]?.type">
+				<div
+					class="site-status-badge"
+					:style="{
+						color: statusColor(statusMap[site.status]?.type),
+						backgroundColor: statusMap[site.status]?.type === 'normal' ? 'var(--c-success-soft)' : statusMap[site.status]?.type === 'error' ? 'var(--c-error-soft)' : statusMap[site.status]?.type === 'warn' ? 'var(--c-warning-soft)' : 'var(--c-bg-2)',
+					}"
+				>
 					<span v-if="site.status !== 0" class="status-dot" />
-					<Icon v-else name="tabler:pause" :size="14" />
+					<Icon v-else name="tabler:pause" :size="12" />
 					<span>{{ statusMap[site.status]?.text }}</span>
 				</div>
 			</div>
@@ -96,7 +107,7 @@ onMounted(getSiteData)
 					v-for="(day, dayIndex) in site.days"
 					:key="day?.date || dayIndex"
 					class="day-bar"
-					:class="getDayStatus(day.percent)"
+					:style="{ backgroundColor: statusColor(getDayStatus(day.percent)) }"
 					:title="`${day?.date ? formatTime(day.date) : '未知日期'}\n可用性: ${day.percent}%\n${day.down.times > 0 ? `宕机 ${day.down.times} 次 / ${formatDuration(day.down.duration)}` : '无宕机记录'}`"
 				/>
 			</div>
@@ -123,36 +134,29 @@ onMounted(getSiteData)
 .status-cards {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 0.8em;
 }
 
 .status-card {
-	background: var(--c-card, #fff);
-	border: 1px solid var(--c-border, rgba(0, 0, 0, 0.08));
-	border-radius: var(--radius-card, 12px);
-	padding: 16px 20px;
+	padding: 1em 1.2em;
 	opacity: 0;
-	animation: status-float-up 0.5s forwards;
-	transition: box-shadow 0.2s, transform 0.2s;
-}
-
-.status-card:hover {
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-	transform: translateY(-1px);
+	animation: status-fade-up 0.4s forwards;
 }
 
 .loading-card {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 200px;
+	min-height: 12em;
+	opacity: 1;
+	animation: none;
 }
 
 .loading-spinner {
-	width: 36px;
-	height: 36px;
-	border: 3px solid var(--c-border, #e0e0e0);
-	border-top-color: var(--c-primary, #41b883);
+	width: 2em;
+	height: 2em;
+	border: 2px solid var(--c-border);
+	border-top-color: var(--c-primary);
 	border-radius: 50%;
 	animation: status-spin 0.8s linear infinite;
 }
@@ -162,61 +166,62 @@ onMounted(getSiteData)
 }
 
 .error-title {
-	font-size: 18px;
+	font-size: 1em;
 	font-weight: 600;
-	color: var(--c-text, #333);
-	margin-bottom: 8px;
+	color: var(--c-text);
+	margin-bottom: 0.3em;
 }
 
 .error-desc {
-	font-size: 13px;
-	color: var(--c-text-secondary, #888);
-	margin-bottom: 16px;
+	font-size: 0.85em;
+	color: var(--c-text-2);
+	margin-bottom: 1em;
 }
 
 .retry-btn {
-	padding: 8px 20px;
-	border: 1px solid var(--c-primary, #41b883);
+	padding: 0.4em 1.2em;
+	border: 1px solid var(--c-primary);
 	background: transparent;
-	color: var(--c-primary, #41b883);
-	border-radius: 8px;
+	color: var(--c-primary);
+	border-radius: 0.4em;
 	cursor: pointer;
-	font-size: 14px;
+	font-size: 0.85em;
 	transition: all 0.2s;
 }
 
 .retry-btn:hover {
-	background: var(--c-primary, #41b883);
-	color: #fff;
+	background: var(--c-primary);
+	color: var(--c-bg);
 }
 
 .card-meta {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 12px;
+	gap: 0.8em;
+	margin-bottom: 0.8em;
 }
 
 .card-title {
 	display: flex;
 	align-items: center;
-	gap: 10px;
+	gap: 0.5em;
 	flex-wrap: wrap;
 	min-width: 0;
 }
 
 .site-name {
 	font-weight: 600;
-	font-size: 15px;
-	color: var(--c-text, #333);
+	font-size: 0.95em;
+	color: var(--c-text);
 }
 
 .site-type {
-	font-size: 11px;
-	padding: 2px 8px;
-	background: var(--c-bg-soft, #f5f5f5);
-	color: var(--c-text-secondary, #888);
-	border-radius: 10px;
+	font-size: 0.7em;
+	padding: 0.15em 0.6em;
+	background: var(--c-bg-2);
+	color: var(--c-text-2);
+	border-radius: 1em;
 	white-space: nowrap;
 	cursor: help;
 }
@@ -225,57 +230,37 @@ onMounted(getSiteData)
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 22px;
-	height: 22px;
-	color: var(--c-text-secondary, #888);
-	border-radius: 4px;
+	width: 1.6em;
+	height: 1.6em;
+	color: var(--c-text-3);
+	border-radius: 0.3em;
 	transition: all 0.2s;
 }
 
 .site-link:hover {
-	color: var(--c-primary, #41b883);
-	background: var(--c-bg-soft, #f5f5f5);
-}
-
-.site-link svg {
-	width: 14px;
-	height: 14px;
+	color: var(--c-primary);
+	background: var(--c-primary-soft);
 }
 
 .site-status-badge {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	font-size: 13px;
+	gap: 0.4em;
+	font-size: 0.8em;
 	font-weight: 500;
-	padding: 4px 10px;
-	border-radius: 12px;
+	padding: 0.25em 0.7em;
+	border-radius: 1em;
 	white-space: nowrap;
-}
-
-.site-status-badge.normal {
-	color: #27ae60;
-	background: rgba(39, 174, 96, 0.1);
-}
-.site-status-badge.error {
-	color: #e74c3c;
-	background: rgba(231, 76, 60, 0.1);
-}
-.site-status-badge.warn {
-	color: #f39c12;
-	background: rgba(243, 156, 18, 0.1);
-}
-.site-status-badge.unknown {
-	color: #7f8c8d;
-	background: rgba(127, 140, 141, 0.1);
+	flex-shrink: 0;
 }
 
 .status-dot {
-	width: 8px;
-	height: 8px;
+	width: 0.5em;
+	height: 0.5em;
 	border-radius: 50%;
 	background: currentColor;
 	position: relative;
+	flex-shrink: 0;
 }
 
 .status-dot::after {
@@ -285,52 +270,42 @@ onMounted(getSiteData)
 	border-radius: 50%;
 	background: currentColor;
 	opacity: 0.4;
-	animation: status-breathing 1.5s ease infinite;
+	animation: status-pulse 1.5s ease infinite;
 }
 
 .timeline {
 	display: flex;
 	gap: 2px;
-	margin: 14px 0 10px;
+	margin: 0.6em 0;
 }
 
 .day-bar {
 	flex: 1;
-	height: 24px;
-	border-radius: 4px;
+	height: 1.4em;
+	border-radius: 0.2em;
 	cursor: pointer;
 	transition: transform 0.2s;
 	min-width: 0;
+	opacity: 0.85;
 }
 
 .day-bar:hover {
-	transform: scaleY(1.15);
-}
-
-.day-bar.normal {
-	background: #2ecc71;
-}
-.day-bar.warn {
-	background: #f39c12;
-}
-.day-bar.error {
-	background: #e74c3c;
-}
-.day-bar.unknown {
-	background: #bdc3c7;
+	transform: scaleY(1.2);
+	opacity: 1;
 }
 
 .card-summary {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 12px;
-	font-size: 12px;
-	color: var(--c-text-secondary, #999);
+	gap: 0.8em;
+	font-size: 0.75em;
+	color: var(--c-text-3);
+	margin-top: 0.6em;
 }
 
 .summary-date {
-	min-width: 80px;
+	min-width: 5em;
 }
 
 .summary-date:last-child {
@@ -342,10 +317,10 @@ onMounted(getSiteData)
 	text-align: center;
 }
 
-@keyframes status-float-up {
+@keyframes status-fade-up {
 	0% {
 		opacity: 0;
-		transform: translateY(16px);
+		transform: translateY(0.8em);
 	}
 	100% {
 		opacity: 1;
@@ -359,20 +334,20 @@ onMounted(getSiteData)
 	}
 }
 
-@keyframes status-breathing {
+@keyframes status-pulse {
 	0% {
 		transform: scale(1);
 		opacity: 0.4;
 	}
 	100% {
-		transform: scale(2.5);
+		transform: scale(2.2);
 		opacity: 0;
 	}
 }
 
 @media (max-width: 640px) {
 	.status-card {
-		padding: 14px 16px;
+		padding: 0.8em 1em;
 	}
 	.card-summary {
 		flex-wrap: wrap;
