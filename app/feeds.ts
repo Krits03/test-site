@@ -36,6 +36,7 @@ export default [
 		entries: [
 			{
 				author: 'Yulliil',
+				sitenick: 'Yulliil Zone(游离域)',
 				desc: '今日はうまく笑えたかな？',
 				link: 'https://yulliil.moe/blog/',
 				feed: 'https://yulliil.moe/blog/',
@@ -46,7 +47,8 @@ export default [
 				comment: '~♡',
 			},
 			{
-				author: '雨后初晴社',
+				author: '宇文Teacher',
+				sitenick: '雨后初晴社',
 				desc: '雨中，听雨声轻灵。雨后，赏水木清华。聆听这广阔天地，感受那动人瞬间。',
 				link: 'https://www.rainafter.cn',
 				feed: 'https://www.rainafter.cn/friends/',
@@ -56,6 +58,18 @@ export default [
 				date: '2026-09-25',
 				comment: '技术参考，借鉴',
 			},
+			{
+	            author: '史帙',
+				sitenick: '史帙Daybook',
+            	desc: '史帙的个人知识库，记录技术实践、博客开发与生活随笔。',
+        	    link: 'https://daybook.page/',
+            	feed: 'https://daybook.page/rss.xml',
+            	icon: 'https://daybook.page/favicon.svg',
+            	avatar: 'https://daybook.page/attachments/picture/shelby.jpg',
+            	archs: ['Go', 'Obsidian'],
+            	date: '2026-10-03',
+             	comment: 'Go 构建的 Obsidian 知识库，技术实践与生活随笔',
+            },
 		],
 	},
 	// #endregion
