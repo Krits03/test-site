@@ -36,7 +36,7 @@ export default [
 		entries: [
 			{
 				author: 'Yulliil',
-				sitenick: 'Yulliil Zone(游离域)',
+				sitenick: 'Yulliil 游离域',
 				desc: '今日はうまく笑えたかな？',
 				link: 'https://yulliil.moe/blog/',
 				feed: 'https://yulliil.moe/blog/',
