@@ -52,6 +52,8 @@ export const useMusicStore = defineStore('music', () => {
 	const playing = ref(false)
 	const loading = ref(false)
 	const error = ref('')
+	/** 重试中状态，用于驱动重试按钮的 loading 表现 */
+	const retrying = ref(false)
 	/** 单曲加载/播放失败，仅作行内提示，不影响播放器继续使用 */
 	const playError = ref('')
 	/** 歌单是否已成功加载 */
@@ -366,6 +368,7 @@ export const useMusicStore = defineStore('music', () => {
 			}
 
 			ready.value = true
+			error.value = ''
 			applySource(0)
 		}
 		catch (e) {
@@ -377,12 +380,27 @@ export const useMusicStore = defineStore('music', () => {
 		}
 	}
 
+	/** 歌单加载失败后重试：保留错误文案以便按钮展示 loading，成功后由 init 清空 */
+	async function retry() {
+		if (initializing || retrying.value)
+			return
+
+		retrying.value = true
+		try {
+			await init()
+		}
+		finally {
+			retrying.value = false
+		}
+	}
+
 	return {
 		list,
 		index,
 		playing,
 		loading,
 		error,
+		retrying,
 		playError,
 		ready,
 		expanded,
@@ -393,6 +411,7 @@ export const useMusicStore = defineStore('music', () => {
 		mode,
 		current,
 		init,
+		retry,
 		play,
 		pause,
 		toggle,

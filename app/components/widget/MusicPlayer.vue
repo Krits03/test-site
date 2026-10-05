@@ -55,9 +55,25 @@ onMounted(() => store.init())
 	</p>
 
 	<ClientOnly v-else>
-		<p v-if="store.error" class="player-tip" title="请检查 music.config.ts 中的歌单配置">
-			{{ store.error }}
-		</p>
+		<div v-if="store.error" class="player-error">
+			<p class="player-tip" title="请检查 music.config.ts 中的歌单配置">
+				{{ store.error }}
+			</p>
+			<button
+				class="retry"
+				type="button"
+				:disabled="store.retrying"
+				title="重新加载歌单"
+				aria-label="重新加载歌单"
+				@click="store.retry()"
+			>
+				<Icon
+					:name="store.retrying ? 'tabler:loader-2' : 'tabler:refresh'"
+					:class="{ spin: store.retrying }"
+				/>
+				<span>{{ store.retrying ? '重试中…' : '重新加载' }}</span>
+			</button>
+		</div>
 
 		<p v-else-if="store.loading && !store.ready" class="player-tip">
 			歌单加载中…
@@ -205,6 +221,44 @@ onMounted(() => store.init())
 	font-size: 0.9em;
 	text-align: center;
 	color: var(--c-text-2);
+}
+
+.player-error {
+	display: grid;
+	justify-items: center;
+	gap: 0.5rem;
+}
+
+.retry {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.4rem 0.9rem;
+	border: 1px solid var(--c-border);
+	border-radius: 1rem;
+	background-color: var(--c-primary-soft);
+	color: var(--c-primary);
+	font-size: 0.85em;
+	transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+	cursor: pointer;
+
+	&:hover:not(:disabled) {
+		background-color: var(--c-primary);
+		color: var(--c-bg);
+	}
+
+	&:disabled {
+		opacity: 0.65;
+		cursor: progress;
+	}
+
+	.spin {
+		animation: retry-spin 1s linear infinite;
+	}
+}
+
+@keyframes retry-spin {
+	to { transform: rotate(1turn); }
 }
 
 .player {
