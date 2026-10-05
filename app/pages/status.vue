@@ -24,4 +24,11 @@ useSeoMeta({
 	flex-direction: column;
 	gap: 0;
 }
+
+/* PC 横屏时 BlogHeader 被隐藏，预留顶部空间，与 FeedGroup 的 2em 间距一致 */
+@media not (max-width: 768px) {
+	.status-page {
+		padding-top: 2em;
+	}
+}
 </style>
