@@ -3,7 +3,7 @@
 基于 **Nuxt 3** 的个人博客（clarity 主题定制），线上地址 [site.wkr-dev.top](https://site.wkr-dev.top/)。
 
 ## 技术栈
-Nuxt 3 · Vue 3 · TypeScript · @nuxt/content · Shiki · Pinia · 多平台部署（EdgeOne / Netlify / Cloudflare）
+Nuxt 3 · Vue 3 · TypeScript · @nuxt/content · Shiki · Pinia · 部署Netlify和Cloudflare平台
 
 ## 功能
 - 双评论系统：Twikoo + giscus，可切换
