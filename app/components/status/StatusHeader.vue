@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getSiteData } from "~/utils/status/helper"
 import { formatTime } from "~/utils/status/time"
-import { statusPublicConfig } from "~/app/config/status.config"
+import { statusPublicConfig } from "~/config/status.config"
 
 const statusStore = useStatusStore()
 

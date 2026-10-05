@@ -3,7 +3,7 @@ import type {
 	SiteDaysStatus,
 	SiteStatusType,
 } from "~/types/status"
-import { statusPublicConfig } from "~/app/config/status.config"
+import { statusPublicConfig } from "~/config/status.config"
 
 /**
  * 格式化 UptimeRobot 返回的站点数据

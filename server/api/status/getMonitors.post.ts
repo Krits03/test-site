@@ -1,7 +1,7 @@
 import type { MonitorsDataResult, MonitorsResult } from "~/types/status"
-import { getCache, setCache } from "~/server/utils/status-cache"
-import { statusServerConfig } from "~/server/utils/status.config"
-import { statusPublicConfig } from "~/app/config/status.config"
+import { getCache, setCache } from "../../utils/status-cache"
+import { statusServerConfig } from "../../utils/status.config"
+import { statusPublicConfig } from "~/config/status.config"
 import { formatSiteData } from "~/utils/status/format"
 
 /**
