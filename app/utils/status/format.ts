@@ -3,6 +3,7 @@ import type {
 	SiteDaysStatus,
 	SiteStatusType,
 } from "~/types/status"
+import { statusPublicConfig } from "~/app/config/status.config"
 
 /**
  * 格式化 UptimeRobot 返回的站点数据
@@ -13,8 +14,7 @@ export function formatSiteData(
 ): MonitorsDataResult | undefined {
 	if (!data?.monitors) return undefined
 
-	const config = useRuntimeConfig()
-	const showLink = config.public.statusShowLink ?? true
+	const showLink = statusPublicConfig.showLink
 	const sites: any[] = data.monitors
 
 	const formatData: SiteStatusType[] = sites.map((site: any): SiteStatusType => {

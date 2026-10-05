@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { getSiteData } from "~/utils/status/helper"
 import { formatTime } from "~/utils/status/time"
+import { statusPublicConfig } from "~/app/config/status.config"
 
 const statusStore = useStatusStore()
 
-// 自动刷新倒计时（5分钟）
-const updateTime = ref(300)
+// 自动刷新间隔（秒，从配置读取）
+const refreshInterval = statusPublicConfig.refreshInterval
+
+// 自动刷新倒计时
+const updateTime = ref(refreshInterval)
 const nextUpdateTime = computed(() => {
 	const time = updateTime.value
 	const minutes = Math.floor(time / 60)
@@ -26,10 +30,10 @@ const statusText = computed(() => ({
 async function refresh() {
 	const lastUpdate = statusStore.siteData?.timestamp || 0
 	if (!lastUpdate) return
-	if (Date.now() - lastUpdate < 5 * 60 * 1000) {
+	if (Date.now() - lastUpdate < refreshInterval * 1000) {
 		return
 	}
-	updateTime.value = 300
+	updateTime.value = refreshInterval
 	await getSiteData()
 }
 
@@ -40,7 +44,7 @@ useIntervalFn(
 		if (updateTime.value === 0) {
 			statusStore.siteStatus = "loading"
 			getSiteData()
-			updateTime.value = 300
+			updateTime.value = refreshInterval
 		}
 	},
 	1000,

@@ -1,5 +1,7 @@
 import type { MonitorsDataResult, MonitorsResult } from "~/types/status"
 import { getCache, setCache } from "~/server/utils/status-cache"
+import { statusServerConfig } from "~/server/utils/status.config"
+import { statusPublicConfig } from "~/app/config/status.config"
 import { formatSiteData } from "~/utils/status/format"
 
 /**
@@ -7,8 +9,7 @@ import { formatSiteData } from "~/utils/status/format"
  */
 function getRanges() {
 	try {
-		const config = useRuntimeConfig()
-		const days = Number(config.public.statusCountDays ?? 60)
+		const days = statusPublicConfig.countDays
 		const today = Temporal.Now.plainDate("Asia/Shanghai")
 		const dates: Temporal.PlainDate[] = []
 
@@ -41,9 +42,7 @@ function getRanges() {
  */
 export default defineEventHandler(async (event): Promise<MonitorsResult> => {
 	try {
-		const config = useRuntimeConfig()
-		const apiUrl = config.statusApiUrl || "https://api.uptimerobot.com/v2/"
-		const apiKey = config.statusApiKey
+		const { apiKey, apiUrl, cacheTTL } = statusServerConfig
 
 		if (!apiKey) {
 			throw new Error("未配置 UptimeRobot API Key（STATUS_API_KEY）")
@@ -87,8 +86,8 @@ export default defineEventHandler(async (event): Promise<MonitorsResult> => {
 		const data = formatSiteData(result, dates)
 		if (!data) throw new Error("站点数据为空")
 
-		// 缓存 1 分钟
-		setCache(cacheKey, data, 60 * 1000)
+		// 缓存
+		setCache(cacheKey, data, cacheTTL)
 
 		return {
 			code: 200,
