@@ -123,6 +123,43 @@ img {
 	}
 }
 
+/* 图片加载占位（移植自 hexo-theme-redefine 的 lazyload 占位骨架）
+   图片加载完成前，以 shimmer 渐变作为底色占位，加载完成后由 .prose-img--loaded 移除。 */
+img.prose-img--loading {
+	background-image: linear-gradient(
+		100deg,
+		var(--c-bg-soft) 30%,
+		var(--c-border) 50%,
+		var(--c-bg-soft) 70%
+	);
+	background-size: 200% 100%;
+	background-repeat: no-repeat;
+	animation: prose-img-shimmer 1.4s ease-in-out infinite;
+}
+
+/* 未提供宽高时，给一个默认比例与最小高度，避免占位塌缩成 0 尺寸 */
+img.prose-img--no-dim.prose-img--loading {
+	width: 100%;
+	aspect-ratio: 3 / 2;
+	min-height: 6rem;
+}
+
+img.prose-img--loaded {
+	animation: none;
+	background-image: none;
+}
+
+@keyframes prose-img-shimmer {
+	0% { background-position: 150% 0; }
+	100% { background-position: -50% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	img.prose-img--loading {
+		animation: none;
+	}
+}
+
 .katex-display, article > .katex {
 	display: block; /* ```math 不会包裹 .katex-display */
 	overflow: auto hidden;
