@@ -3,6 +3,15 @@ import musicConfig from '~~/music.config'
 
 const store = useMusicStore()
 
+// 音乐卡片默认折叠，点击标题右侧按钮可展开；偏好记忆在 localStorage
+const COLLAPSE_KEY = 'music-card-collapsed'
+const collapsed = ref(true)
+function toggleCollapse() {
+	collapsed.value = !collapsed.value
+	if (import.meta.client)
+		localStorage.setItem(COLLAPSE_KEY, collapsed.value ? '1' : '0')
+}
+
 // 拖动进度条期间用本地值渲染，避免被 timeupdate 抢回
 const seeking = ref(false)
 const seekValue = ref(0)
@@ -45,14 +54,35 @@ function onSeekCommit() {
 	seeking.value = false
 }
 
-onMounted(() => store.init())
+onMounted(() => {
+	if (import.meta.client) {
+		const saved = localStorage.getItem(COLLAPSE_KEY)
+		if (saved !== null)
+			collapsed.value = saved === '1'
+	}
+	store.init()
+})
 </script>
 
 <template>
 <BlogWidget card title="音乐">
-	<p v-if="!musicConfig.enable" class="player-tip">
-		播放器已在 music.config.ts 中关闭
-	</p>
+	<template #action>
+		<button
+			class="collapse-toggle"
+			type="button"
+			:title="collapsed ? '展开音乐播放器' : '收起音乐播放器'"
+			:aria-label="collapsed ? '展开音乐播放器' : '收起音乐播放器'"
+			:aria-expanded="!collapsed"
+			@click="toggleCollapse()"
+		>
+			<Icon :name="collapsed ? 'tabler:chevrons-down' : 'tabler:chevrons-up'" />
+		</button>
+	</template>
+
+	<div v-show="!collapsed">
+		<p v-if="!musicConfig.enable" class="player-tip">
+			播放器已在 music.config.ts 中关闭
+		</p>
 
 	<ClientOnly v-else>
 		<div v-if="store.error" class="player-error">
@@ -212,6 +242,7 @@ onMounted(() => store.init())
 			</p>
 		</template>
 	</ClientOnly>
+	</div>
 </BlogWidget>
 </template>
 
@@ -221,6 +252,26 @@ onMounted(() => store.init())
 	font-size: 0.9em;
 	text-align: center;
 	color: var(--c-text-2);
+}
+
+.collapse-toggle {
+	display: grid;
+	place-items: center;
+	width: 1.6rem;
+	height: 1.6rem;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	background: none;
+	font-size: 1.1rem;
+	color: var(--c-text-2);
+	transition: background-color 0.2s, color 0.2s;
+	cursor: pointer;
+
+	&:hover {
+		background-color: var(--c-bg-soft);
+		color: var(--c-primary);
+	}
 }
 
 .player-error {
