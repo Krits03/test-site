@@ -4,6 +4,7 @@ import { pathToFileURL } from 'node:url'
 import { name as ciName, CLOUDFLARE_PAGES, GITHUB_ACTIONS, NETLIFY } from 'ci-info'
 import { pascalCase } from 'es-toolkit/string'
 import { Temporal } from 'temporal-polyfill'
+import { createStatusPublicConfig } from './app/config/status.config'
 import blogConfig from './blog.config'
 import packageJson from './package.json'
 
@@ -103,6 +104,7 @@ export default defineNuxtConfig({
 			ci: env.TENCENTCLOUD_RUNENV === 'SCF' ? 'EdgeOne' : ciName || '',
 			nodeVersion,
 			platform,
+			status: createStatusPublicConfig(),
 		},
 	},
 

@@ -1,8 +1,10 @@
 import type { MonitorsDataResult, MonitorsResult } from "~/types/status"
 import { getCache, setCache } from "../../utils/status-cache"
 import { statusServerConfig } from "../../utils/status.config"
-import { statusPublicConfig } from "~/config/status.config"
+import { createStatusPublicConfig } from "~/config/status.config"
 import { formatSiteData } from "~/utils/status/format"
+
+const statusPublicConfig = createStatusPublicConfig()
 
 /**
  * 生成最近 N 天的日期范围
@@ -83,7 +85,7 @@ export default defineEventHandler(async (event): Promise<MonitorsResult> => {
 		})
 
 		// 格式化数据
-		const data = formatSiteData(result, dates)
+		const data = formatSiteData(result, dates, statusPublicConfig.showLink)
 		if (!data) throw new Error("站点数据为空")
 
 		// 缓存

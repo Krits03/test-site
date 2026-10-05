@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { getSiteData } from "~/utils/status/helper"
 import { formatTime } from "~/utils/status/time"
-import { statusPublicConfig } from "~/config/status.config"
+import { useStatusPublicConfig } from "~/config/status.config"
 
 const statusStore = useStatusStore()
+const statusPublicConfig = useStatusPublicConfig()
 const refreshInterval = statusPublicConfig.refreshInterval
 const updateTime = ref(refreshInterval)
 

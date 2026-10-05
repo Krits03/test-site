@@ -1,10 +1,10 @@
 /**
  * 站点状态监测 - 服务端配置（含敏感信息，不会打包到客户端）
  *
- * 环境变量：
- *   STATUS_API_KEY      UptimeRobot Read-only API Key（必填）
- *   STATUS_API_URL      UptimeRobot API 地址（可选，默认官方地址）
- *   STATUS_CACHE_TTL    服务端缓存有效期（毫秒，可选，默认 60000）
+ * 环境变量（与原作者 imsyy/site-status 命名一致）：
+ *   API_KEY        UptimeRobot Read-only API Key（必填）
+ *   API_URL        UptimeRobot API 地址（可选，默认官方地址）
+ *   STATUS_CACHE_TTL  服务端缓存有效期（毫秒，可选，默认 60000，本项目特有）
  */
 
 export interface StatusServerConfig {
@@ -17,7 +17,7 @@ export interface StatusServerConfig {
 }
 
 export const statusServerConfig: StatusServerConfig = {
-	apiKey: process.env.STATUS_API_KEY || "",
-	apiUrl: process.env.STATUS_API_URL || "https://api.uptimerobot.com/v2/",
+	apiKey: process.env.API_KEY || "",
+	apiUrl: process.env.API_URL || "https://api.uptimerobot.com/v2/",
 	cacheTTL: Number(process.env.STATUS_CACHE_TTL || 60 * 1000),
 }
