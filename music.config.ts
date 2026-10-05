@@ -38,7 +38,7 @@ export interface MusicMetingSource {
 
 /** NCM（NeteaseCloudMusicApi）在线数据源，用于按歌单 ID 解析网易云曲目 */
 export interface MusicNcmSource {
-	/** 实例根地址，如 'https://music163.api.kr033.top' */
+	/** 实例根地址，如 'https://music-163.api.kr033.top' */
 	api: string
 	/** 歌单 ID，取自歌单链接的 `id` 查询参数 */
 	playlistId: string
@@ -115,7 +115,7 @@ const musicConfig: MusicConfig = {
 	 * 实测：CORS: *，randomCNIP 可用，返回真实 mp3 直链。
 	 */
 	ncm: {
-		api: 'https://music163.api.kr033.top',
+		api: 'https://music-163.api.kr033.top',
 		playlistId: '18440555172',
 		// 随机中国出口 IP，绕过网易云对数据中心 IP 的直链风控；无需改动可保持开启
 		randomCNIP: true,
