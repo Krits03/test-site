@@ -94,6 +94,10 @@ export default defineNuxtConfig({
 
 	runtimeConfig: {
 		// @keep-sorted
+		// UptimeRobot 站点状态监测 API 地址
+		statusApiUrl: process.env.STATUS_API_URL || "https://api.uptimerobot.com/v2/",
+		// UptimeRobot Read-only API Key（必填，用于 /status 页面获取监控数据）
+		statusApiKey: process.env.STATUS_API_KEY || "",
 		public: {
 			arch,
 			// 用 Instant 的 RFC 3339 形式（如 2026-09-26T03:53:51.274Z），
@@ -103,6 +107,10 @@ export default defineNuxtConfig({
 			ci: env.TENCENTCLOUD_RUNENV === 'SCF' ? 'EdgeOne' : ciName || '',
 			nodeVersion,
 			platform,
+			// 站点状态监测：统计天数（建议 30-90）
+			statusCountDays: Number(process.env.STATUS_COUNT_DAYS || 60),
+			// 站点状态监测：是否在卡片上显示站点跳转链接
+			statusShowLink: process.env.STATUS_SHOW_LINK !== 'false',
 		},
 	},
 
