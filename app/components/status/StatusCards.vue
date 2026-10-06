@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SiteStatusType, SiteStatus } from "~/types/status"
-import { getSiteData } from "~/utils/status/helper"
+import { getSiteData, manualRefreshDelay } from "~/utils/status/helper"
 import { formatTime, formatDuration, formatInterval } from "~/utils/status/time"
 
 const statusStore = useStatusStore()
@@ -44,8 +44,16 @@ function statusColor(type: SiteStatus): string {
 }
 
 async function refresh() {
+	const wait = manualRefreshDelay(Date.now(), statusStore.lastManualAt)
+	if (wait > 0) {
+		statusStore.errorMessage = `请 ${Math.ceil(wait / 1000)} 秒后再刷新`
+		statusStore.siteStatus = "unknown"
+		return
+	}
+	statusStore.lastManualAt = Date.now()
 	statusStore.$patch({ siteStatus: "loading", siteData: undefined, errorMessage: "" })
-	await getSiteData()
+	// 错误态重试必须回源，否则拿到的还是同一份缓存，看起来像没反应
+	await getSiteData({ force: true })
 }
 
 onMounted(getSiteData)

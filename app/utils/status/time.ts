@@ -21,16 +21,18 @@ export function formatTime(
 
 	const instant = Temporal.Instant.fromEpochMilliseconds(correctedTime)
 	const zoned = instant.toZonedDateTimeISO("Asia/Shanghai")
-	const today = Temporal.Now.zonedDateTime("Asia/Shanghai").plainDate
+	// temporal-polyfill 1.x：Now.zonedDateTime 与 ZonedDateTime.plainDate 已移除，
+	// 改用 zonedDateTimeISO(tz) 与 toPlainDate()
+	const today = Temporal.Now.zonedDateTimeISO("Asia/Shanghai").toPlainDate()
 
-	if (showOnlyTimeIfToday && zoned.plainDate.equals(today)) {
+	if (showOnlyTimeIfToday && zoned.toPlainDate().equals(today)) {
 		return zoned.toPlainTime().toString().slice(0, 8)
 	}
 
 	if (showTime) {
-		return `${zoned.plainDate.toString()} ${zoned.toPlainTime().toString().slice(0, 8)}`
+		return `${zoned.toPlainDate().toString()} ${zoned.toPlainTime().toString().slice(0, 8)}`
 	}
-	return zoned.plainDate.toString()
+	return zoned.toPlainDate().toString()
 }
 
 /**

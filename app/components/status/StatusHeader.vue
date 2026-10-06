@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getSiteData } from "~/utils/status/helper"
+import { getSiteData, manualRefreshDelay } from "~/utils/status/helper"
 import { formatTime } from "~/utils/status/time"
 import { useStatusPublicConfig } from "~~/status.config"
 
@@ -7,6 +7,10 @@ const statusStore = useStatusStore()
 const statusPublicConfig = useStatusPublicConfig()
 const refreshInterval = statusPublicConfig.refreshInterval
 const updateTime = ref(refreshInterval)
+
+// 手动刷新节流：同一浏览器 1 分钟内只放行一次，错误态同样可以重试
+const refreshing = ref(false)
+const cooldownHint = ref("")
 
 const nextUpdateTime = computed(() => {
 	const time = updateTime.value
@@ -28,21 +32,36 @@ const statusMeta = computed(() => {
 
 const stats = computed(() => statusStore.siteData?.status)
 
-async function refresh() {
-	const lastUpdate = statusStore.siteData?.timestamp || 0
-	if (!lastUpdate) return
-	if (Date.now() - lastUpdate < refreshInterval * 1000) return
+async function runRefresh(force: boolean) {
+	if (refreshing.value) return
+	refreshing.value = true
+	try {
+		await getSiteData({ force })
+	} finally {
+		refreshing.value = false
+	}
+}
+
+function refresh() {
+	const wait = manualRefreshDelay(Date.now(), statusStore.lastManualAt)
+	if (wait > 0) {
+		cooldownHint.value = `请 ${Math.ceil(wait / 1000)} 秒后再刷新`
+		return
+	}
+	cooldownHint.value = ""
+	statusStore.lastManualAt = Date.now()
+	// 手动刷新即视为新一轮周期，倒计时与“更新于”都重新起算
 	updateTime.value = refreshInterval
-	await getSiteData()
+	runRefresh(true)
 }
 
 useIntervalFn(
 	() => {
 		if (updateTime.value > 0) updateTime.value--
 		if (updateTime.value === 0) {
-			statusStore.siteStatus = "loading"
-			getSiteData()
 			updateTime.value = refreshInterval
+			// 自动刷新走服务端缓存，不用 force 回源，避免打爆 UptimeRobot 配额
+			runRefresh(false)
 		}
 	},
 	1000,
@@ -86,7 +105,14 @@ useIntervalFn(
 				更新于 {{ formatTime(statusStore.siteData.timestamp, { showTime: true, showOnlyTimeIfToday: true }) }}
 			</span>
 			<span class="meta-item">{{ nextUpdateTime }}后自动刷新</span>
-			<button class="refresh-btn" @click="refresh" title="手动刷新">
+			<span v-if="cooldownHint" class="meta-item cooldown-hint">{{ cooldownHint }}</span>
+			<button
+				class="refresh-btn"
+				:class="{ 'is-loading': refreshing }"
+				:disabled="refreshing"
+				:title="refreshing ? '刷新中' : '手动刷新（1 分钟一次）'"
+				@click="refresh"
+			>
 				<Icon name="tabler:refresh" :size="16" />
 			</button>
 		</div>
@@ -207,6 +233,23 @@ useIntervalFn(
 	color: var(--c-primary);
 	border-color: var(--c-primary);
 	background: var(--c-primary-soft);
+}
+
+.cooldown-hint {
+	color: var(--c-warning);
+}
+
+.refresh-btn:disabled {
+	cursor: default;
+	opacity: 0.6;
+}
+
+.refresh-btn.is-loading :deep(svg) {
+	animation: refresh-spin 0.8s linear infinite;
+}
+
+@keyframes refresh-spin {
+	to { transform: rotate(360deg); }
 }
 
 @keyframes status-pulse {

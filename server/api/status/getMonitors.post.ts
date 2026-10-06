@@ -8,13 +8,23 @@ import { formatSiteData } from "~/utils/status/format"
 const statusPublicConfig = createStatusPublicConfig()
 
 /**
+ * 上海时区某个自然日 00:00 的 epoch 秒
+ * temporal-polyfill 1.x 移除了 epochSeconds，这里统一从毫秒换算
+ */
+function daySeconds(date: Temporal.PlainDate): number {
+	return Math.floor(
+		date.toZonedDateTime("Asia/Shanghai").epochMilliseconds / 1000,
+	)
+}
+
+/**
  * 生成最近 N 天的日期范围
  */
 function getRanges() {
 	try {
 		const days = statusPublicConfig.countDays
-		// Temporal.Now.plainDate() 参数是日历，不是时区；需用 zonedDateTime 获取指定时区的日期
-		const today = Temporal.Now.zonedDateTime("Asia/Shanghai").plainDate
+		// temporal-polyfill 1.x：Now.zonedDateTime 与 ZonedDateTime.plainDate 已移除
+		const today = Temporal.Now.zonedDateTimeISO("Asia/Shanghai").toPlainDate()
 		const dates: Temporal.PlainDate[] = []
 
 		for (let d = 0; d < days; d++) {
@@ -22,16 +32,13 @@ function getRanges() {
 		}
 
 		const ranges = dates.map((date) => {
-			const start = date.toZonedDateTime("Asia/Shanghai").epochSeconds
-			const end = date.add({ days: 1 }).toZonedDateTime("Asia/Shanghai")
-				.epochSeconds
+			const start = daySeconds(date)
+			const end = daySeconds(date.add({ days: 1 }))
 			return `${start}_${end}`
 		})
 
-		const start = dates[dates.length - 1].toZonedDateTime("Asia/Shanghai")
-			.epochSeconds
-		const end = dates[0].add({ days: 1 }).toZonedDateTime("Asia/Shanghai")
-			.epochSeconds
+		const start = daySeconds(dates[dates.length - 1])
+		const end = daySeconds(dates[0].add({ days: 1 }))
 		ranges.push(`${start}_${end}`)
 
 		return { dates, start, end, ranges: ranges.join("-") }
@@ -52,9 +59,12 @@ export default defineEventHandler(async (event): Promise<MonitorsResult> => {
 			throw new Error("未配置 UptimeRobot API Key，请设置环境变量 API_KEY")
 		}
 
+		// 手动刷新带 x-status-force，跳过读缓存直接回源（与 functions 版语义一致）
+		const force = getHeader(event, "x-status-force") === "1"
+
 		// 检查缓存
 		const cacheKey = "site-status-data"
-		const cachedData = getCache<MonitorsDataResult>(cacheKey)
+		const cachedData = force ? undefined : getCache<MonitorsDataResult>(cacheKey)
 		if (cachedData) {
 			return {
 				code: 200,

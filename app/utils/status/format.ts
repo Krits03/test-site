@@ -28,7 +28,10 @@ export function formatSiteData(
 		dates.forEach((date, index) => {
 			timeMap.set(date.toString().replace(/-/g, ""), index)
 			dailyData[index] = {
-				date: date.toZonedDateTime("Asia/Shanghai").epochSeconds,
+				// temporal-polyfill 1.x 移除了 Instant/ZonedDateTime 的 epochSeconds，改用毫秒
+				date: Math.floor(
+					date.toZonedDateTime("Asia/Shanghai").epochMilliseconds / 1000,
+				),
 				percent: Math.floor(Number(ranges[index] || 0) * 100) / 100,
 				down: { times: 0, duration: 0 },
 			}
@@ -38,11 +41,12 @@ export function formatSiteData(
 		const total = { times: 0, duration: 0 }
 		site?.logs?.forEach((log: any) => {
 			if (log?.type === 1 || log?.type === 99) {
-				const logDate = Temporal.Instant.fromEpochSeconds(
-					Number(log?.datetime),
+				const logDate = Temporal.Instant.fromEpochMilliseconds(
+					Number(log?.datetime) * 1000,
 				)
 					.toZonedDateTimeISO("Asia/Shanghai")
-					.plainDate.toString()
+					.toPlainDate()
+					.toString()
 					.replace(/-/g, "")
 				const dateIndex = timeMap.get(logDate)
 				if (dateIndex !== undefined && dailyData[dateIndex]) {
