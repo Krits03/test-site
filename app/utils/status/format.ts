@@ -1,3 +1,4 @@
+import { Temporal } from "temporal-polyfill"
 import type {
 	MonitorsDataResult,
 	SiteDaysStatus,

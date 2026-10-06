@@ -1,6 +1,7 @@
 /**
  * 时间格式化工具（基于 Temporal，替代 dayjs）
  */
+import { Temporal } from "temporal-polyfill"
 
 interface FormatTimeOptions {
 	showTime?: boolean
