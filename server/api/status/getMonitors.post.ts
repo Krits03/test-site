@@ -12,7 +12,8 @@ const statusPublicConfig = createStatusPublicConfig()
 function getRanges() {
 	try {
 		const days = statusPublicConfig.countDays
-		const today = Temporal.Now.plainDate("Asia/Shanghai")
+		// Temporal.Now.plainDate() 参数是日历，不是时区；需用 zonedDateTime 获取指定时区的日期
+		const today = Temporal.Now.zonedDateTime("Asia/Shanghai").plainDate
 		const dates: Temporal.PlainDate[] = []
 
 		for (let d = 0; d < days; d++) {

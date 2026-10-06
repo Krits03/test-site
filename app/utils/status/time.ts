@@ -20,7 +20,7 @@ export function formatTime(
 
 	const instant = Temporal.Instant.fromEpochMilliseconds(correctedTime)
 	const zoned = instant.toZonedDateTimeISO("Asia/Shanghai")
-	const today = Temporal.Now.plainDate("Asia/Shanghai")
+	const today = Temporal.Now.zonedDateTime("Asia/Shanghai").plainDate
 
 	if (showOnlyTimeIfToday && zoned.plainDate.equals(today)) {
 		return zoned.toPlainTime().toString().slice(0, 8)
