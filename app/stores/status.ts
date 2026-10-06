@@ -6,8 +6,10 @@ export const useStatusStore = defineStore("status", () => {
 	const siteStatus = ref<SiteStatus>("loading")
 	// 站点数据
 	const siteData = ref<MonitorsDataResult>()
+	// 错误信息
+	const errorMessage = ref<string>("")
 	// 滚动高度
 	const scrollTop = ref(0)
 
-	return { siteStatus, siteData, scrollTop }
+	return { siteStatus, siteData, errorMessage, scrollTop }
 })

@@ -17,7 +17,8 @@ export interface StatusServerConfig {
 }
 
 export const statusServerConfig: StatusServerConfig = {
-	apiKey: process.env.API_KEY || "",
-	apiUrl: process.env.API_URL || "https://api.uptimerobot.com/v2/",
+	// 向后兼容：优先 API_KEY（原作者命名），其次 STATUS_API_KEY（旧命名）
+	apiKey: process.env.API_KEY || process.env.STATUS_API_KEY || "",
+	apiUrl: process.env.API_URL || process.env.STATUS_API_URL || "https://api.uptimerobot.com/v2/",
 	cacheTTL: Number(process.env.STATUS_CACHE_TTL || 60 * 1000),
 }

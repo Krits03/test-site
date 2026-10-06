@@ -26,8 +26,10 @@ export interface StatusPublicConfig {
  */
 export function createStatusPublicConfig(): StatusPublicConfig {
 	return {
-		countDays: Number(process.env.COUNT_DAYS || 60),
-		showLink: process.env.SHOW_LINK !== "false",
+		// 向后兼容：优先 COUNT_DAYS（原作者命名），其次 STATUS_COUNT_DAYS（旧命名）
+		countDays: Number(process.env.COUNT_DAYS || process.env.STATUS_COUNT_DAYS || 60),
+		// 向后兼容：优先 SHOW_LINK（原作者命名），其次 STATUS_SHOW_LINK（旧命名）
+		showLink: (process.env.SHOW_LINK ?? process.env.STATUS_SHOW_LINK) !== "false",
 		refreshInterval: Number(process.env.STATUS_REFRESH_INTERVAL || 300),
 	}
 }

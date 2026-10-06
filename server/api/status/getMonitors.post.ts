@@ -47,7 +47,7 @@ export default defineEventHandler(async (event): Promise<MonitorsResult> => {
 		const { apiKey, apiUrl, cacheTTL } = statusServerConfig
 
 		if (!apiKey) {
-			throw new Error("未配置 UptimeRobot API Key（STATUS_API_KEY）")
+			throw new Error("未配置 UptimeRobot API Key，请设置环境变量 API_KEY")
 		}
 
 		// 检查缓存
@@ -84,9 +84,16 @@ export default defineEventHandler(async (event): Promise<MonitorsResult> => {
 			body,
 		})
 
+		// 检查 UptimeRobot API 响应状态
+		if (result?.stat === "fail") {
+			const errorMsg = result?.error?.message || "UptimeRobot API 返回失败"
+			console.error("UptimeRobot API 错误:", JSON.stringify(result?.error))
+			throw new Error(`UptimeRobot API 错误: ${errorMsg}`)
+		}
+
 		// 格式化数据
 		const data = formatSiteData(result, dates, statusPublicConfig.showLink)
-		if (!data) throw new Error("站点数据为空")
+		if (!data) throw new Error("站点数据为空，请检查 API Key 是否有监控站点")
 
 		// 缓存
 		setCache(cacheKey, data, cacheTTL)

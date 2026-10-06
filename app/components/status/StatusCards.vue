@@ -44,7 +44,7 @@ function statusColor(type: SiteStatus): string {
 }
 
 async function refresh() {
-	statusStore.$patch({ siteStatus: "loading", siteData: undefined })
+	statusStore.$patch({ siteStatus: "loading", siteData: undefined, errorMessage: "" })
 	await getSiteData()
 }
 
@@ -58,7 +58,7 @@ onMounted(getSiteData)
 			<div v-if="statusStore.siteStatus !== 'unknown'" class="loading-spinner" />
 			<div v-else class="error-state">
 				<p class="error-title">数据获取失败</p>
-				<p class="error-desc">请检查 STATUS_API_KEY 配置或网络连接</p>
+				<p class="error-desc">{{ statusStore.errorMessage || "请检查 API_KEY 配置或网络连接" }}</p>
 				<button class="retry-btn" @click="refresh">重新加载</button>
 			</div>
 		</div>
